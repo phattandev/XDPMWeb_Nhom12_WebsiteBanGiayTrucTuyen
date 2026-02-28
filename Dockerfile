@@ -1,5 +1,5 @@
 # Sử dụng PHP 8.2 và Apache làm nền tảng
-FROM php:8.2-apache
+FROM php:8.4-apache
 
 # 1. Cài đặt các công cụ hệ thống cần thiết
 RUN apt-get update && apt-get install -y \
