@@ -50,5 +50,5 @@ RUN npm install \
 # 11. Mở cổng mạng
 EXPOSE 80
 
-# 12. Lệnh khởi chạy server
-CMD ["apache2-foreground"]
+# 12. Lệnh khởi chạy server (Tự động xóa cache và Migrate trước khi bật Apache)
+CMD bash -c "php artisan config:clear && php artisan migrate --force && apache2-foreground"
