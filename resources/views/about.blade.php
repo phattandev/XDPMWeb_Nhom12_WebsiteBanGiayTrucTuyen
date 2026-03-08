@@ -8,7 +8,6 @@
 </head>
 <body class="bg-slate-50 font-sans antialiased">
 
-    <!-- Header / Navigation đơn giản -->
     <nav class="bg-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
@@ -26,9 +25,7 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main>
-        <!-- Section 1: Hero -->
         <section class="relative bg-white py-16 lg:py-24 overflow-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="relative z-10 lg:grid lg:grid-cols-2 lg:gap-8 items-center">
@@ -55,7 +52,6 @@
             </div>
         </section>
 
-        <!-- Section 2: Stats (Những con số) -->
         <section class="bg-slate-900 py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
@@ -79,14 +75,13 @@
             </div>
         </section>
 
-        <!-- Section 3: Cam kết -->
         <section class="py-20 bg-slate-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
                 <h2 class="text-3xl font-bold text-slate-900">Cam kết của chúng tôi</h2>
                 <div class="w-20 h-1 bg-orange-600 mx-auto mt-4"></div>
             </div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Card 1 -->
+                <!-- Product 1 -->
                 <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-xl transition-shadow border-t-4 border-orange-500">
                     <div class="text-orange-600 mb-4">
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -94,7 +89,7 @@
                     <h3 class="text-xl font-bold mb-3 text-slate-800">Chính hãng 100%</h3>
                     <p class="text-slate-600 text-sm leading-relaxed">Mọi sản phẩm tại cửa hàng đều được nhập khẩu chính ngạch, đảm bảo nguồn gốc và chất lượng cao nhất.</p>
                 </div>
-                <!-- Card 2 -->
+                <!-- Product 2 -->
                 <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-xl transition-shadow border-t-4 border-slate-900">
                     <div class="text-slate-900 mb-4">
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
@@ -102,7 +97,7 @@
                     <h3 class="text-xl font-bold mb-3 text-slate-800">Đổi trả 30 ngày</h3>
                     <p class="text-slate-600 text-sm leading-relaxed">Bạn không vừa ý? Bạn muốn đổi size? Chúng tôi hỗ trợ đổi trả linh hoạt trong vòng 30 ngày hoàn toàn miễn phí.</p>
                 </div>
-                <!-- Card 3 -->
+                <!-- Product 3 -->
                 <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-xl transition-shadow border-t-4 border-orange-500">
                     <div class="text-orange-600 mb-4">
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
