@@ -51,4 +51,4 @@ RUN npm install \
 EXPOSE 80
 
 # 12. Lệnh khởi chạy server (Tự động xóa cache, Migrate và Seed trước khi bật Apache)
-CMD bash -c "php artisan config:clear && php artisan migrate --force --seed && apache2-foreground"
+CMD bash -c "php artisan config:clear && php artisan migrate:fresh --force && php artisan db:seed --force && apache2-foreground"
