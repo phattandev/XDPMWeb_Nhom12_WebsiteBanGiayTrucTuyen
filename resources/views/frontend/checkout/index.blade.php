@@ -1,0 +1,1 @@
+<!-- Trang điền thông tin thanh toán -->

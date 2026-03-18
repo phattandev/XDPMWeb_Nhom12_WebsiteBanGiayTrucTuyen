@@ -11,22 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // 1. Tạo bảng users
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('name', 50);
+            $table->string('email', 50)->unique();
             $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->string('phone', 20)->nullable();
+            $table->string('address', 255)->nullable();
+            $table->enum('role', ['admin', 'customer'])->default('customer');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
+        // 2. Tạo bảng phục hồi mật khẩu (Mặc định của Laravel)
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
+        // 3. Tạo bảng Sessions để lưu phiên đăng nhập (Mặc định của Laravel)
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
