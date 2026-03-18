@@ -48,7 +48,7 @@
                 </div>
 
                 <div class="text-sm">
-                    <a href="{{ route('password.request') }}" class="font-semibold text-orange-600 hover:text-orange-500 transition">
+                    <a href="#" class="font-semibold text-orange-600 hover:text-orange-500 transition">
                         Quên mật khẩu?
                     </a>
                 </div>

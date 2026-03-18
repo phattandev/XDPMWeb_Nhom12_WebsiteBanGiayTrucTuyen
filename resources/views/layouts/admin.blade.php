@@ -15,9 +15,9 @@
         </div>
         <nav class="flex-1 p-4 space-y-2">
             <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2.5 bg-orange-600 rounded-lg text-white font-medium shadow-md">Bảng điều khiển</a>
-            <a href="{{ route('admin.products.index') }}" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition">Quản lý Sản phẩm</a>
-            <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition">Quản lý Đơn hàng</a>
-            <a href="{{ route('admin.users.index') }}" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition">Quản lý Khách hàng</a>
+            <a href="#" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition">Quản lý Sản phẩm</a>
+            <a href="#" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition">Quản lý Đơn hàng</a>
+            <a href="#" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition">Quản lý Khách hàng</a>
         </nav>
     </aside>
 

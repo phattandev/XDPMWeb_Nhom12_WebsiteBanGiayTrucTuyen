@@ -9,6 +9,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+
         // 1. Users
         DB::table('users')->insert([
             ['name' => 'Admin', 'email' => 'admin@store.com', 'password' => Hash::make('hashed_pw'), 'phone' => '0901234567', 'address' => 'Store Address', 'role' => 'admin'],
