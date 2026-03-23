@@ -31,12 +31,26 @@ class OrderController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // Hàm 1: Xem chi tiết đơn hàng
+    public function show($id)
     {
-        //
+        // Lấy thông tin của 1 đơn hàng dựa vào ID
+        $order = DB::table('orders')->where('id', $id)->first();
+        
+        // Trả về giao diện chi tiết (mình sẽ tạo ở Bước 4)
+        return view('admin.orders.show', compact('order'));
+    }
+
+    // Hàm 2: Duyệt đơn hàng (Đổi trạng thái)
+    public function approve($id)
+    {
+        // Đổi trạng thái từ 'Pending' sang 'Shipped' (Đã giao hàng)
+        DB::table('orders')->where('id', $id)->update([
+            'status' => 'Shipped'
+        ]);
+
+        // Quay lại trang danh sách và báo thành công
+        return redirect()->back()->with('success', 'Đã duyệt đơn hàng #'.$id.' thành công!');
     }
 
     /**

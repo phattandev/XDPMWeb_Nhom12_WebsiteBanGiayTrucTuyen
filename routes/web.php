@@ -7,7 +7,7 @@ use App\Http\Controllers\ShoeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
-
+use App\Http\Controllers\CheckoutController;
 // CÁC TRANG CÔNG KHAI (Ai cũng xem được)
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -36,7 +36,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 
     // Đặt hàng & Thanh toán
-    Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+    // đơn hàng của customer
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    // Route hứng dữ liệu form POST lên
+    Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::post('/order/place', [OrderController::class, 'placeOrder'])->name('order.place');
     Route::get('/order/success/{id}', [OrderController::class, 'success'])->name('order.success');
     
@@ -45,6 +48,7 @@ Route::middleware('auth')->group(function () {
 
     // Thanh toán online (Dành cho bảng Payments mới thêm)
     Route::get('/payment/process/{order_id}', [PaymentController::class, 'process'])->name('payment.process');
+    
 });
 
 // ADMIN (Yêu cầu đăng nhập & Role là 'admin')
@@ -52,6 +56,12 @@ Route::middleware('auth')->group(function () {
 Route::prefix('admin')->middleware(['auth'])->group(function () {
     // Tạm thời comment lại hoặc tạo các controller này sau
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+    // Route quản lý đơn hàng
+    Route::get('/orders', [App\Http\Controllers\OrderController::class, 'index'])->name('admin.orders.index');
+    // Route xem chi tiết đơn hàng
+    Route::get('/orders/{id}', [App\Http\Controllers\OrderController::class, 'show'])->name('admin.orders.show');
+   // Route bấm nút Duyệt đơn hàng (Dùng POST để bảo mật)
+    Route::post('/orders/{id}/approve', [App\Http\Controllers\OrderController::class, 'approve'])->name('admin.orders.approve');
     // Route::resource('shoes', App\Http\Controllers\Admin\ShoeController::class);
     // Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
     // Route::resource('orders', App\Http\Controllers\Admin\OrderController::class);
