@@ -42,6 +42,37 @@ class ShoeController extends Controller
             });
         }
 
+        // Lọc theo Giá (Mức giá thấp nhất - cao nhất)
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Sắp xếp sản phẩm (Sort)
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'price_asc':
+                    $query->orderBy('price', 'asc'); // Giá thấp đến cao
+                    break;
+                case 'price_desc':
+                    $query->orderBy('price', 'desc'); // Giá cao đến thấp
+                    break;
+                case 'best_selling':
+                    // Yêu cầu DB có cột sold_quantity hoặc join bảng orders. Tạm fallback theo id.
+                    $query->orderBy('id', 'asc'); 
+                    break;
+                case 'newest':
+                default:
+                    $query->orderBy('created_at', 'desc'); // Mới nhất
+                    break;
+            }
+        } else {
+            // Mặc định load vào là xem hàng mới nhất
+            $query->orderBy('created_at', 'desc'); 
+        }
+
         // Phân trang: mỗi trang hiển thị 12 đôi giày
         $shoes = $query->paginate(12)->appends($request->query());
         
