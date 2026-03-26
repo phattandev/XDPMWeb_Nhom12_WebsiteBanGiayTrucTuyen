@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->integer('total_amount');
             $table->string('shipping_address', 255);
-            $table->enum('payment_method', ['COD', 'Bank Transfer'])->default('COD');
-            $table->enum('status', ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'])->default('Pending');
+            $table->string('payment_method', 50)->default('COD');
+            $table->string('status', 50)->default('Pending');
             $table->timestamp('order_date')->useCurrent();
         });
     }

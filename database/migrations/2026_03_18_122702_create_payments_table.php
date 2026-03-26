@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
             $table->string('transaction_id', 100)->nullable();
             $table->integer('amount');
-            $table->enum('payment_method', ['COD', 'Bank Transfer', 'VNPay', 'Momo'])->default('COD');
-            $table->enum('payment_status', ['Pending', 'Completed', 'Failed', 'Refunded'])->default('Pending');
+            $table->string('payment_method', 50)->default('COD');
+            $table->string('payment_status', 50)->default('Pending');
             $table->timestamp('payment_date')->useCurrent();
         });
     }
