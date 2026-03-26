@@ -19,7 +19,7 @@
                         $mainImgSrc = str_starts_with($primaryImage->image_url, 'http') ? $primaryImage->image_url : asset('images/' . $primaryImage->image_url);
                     }
                 @endphp
-                <img src="{{ $mainImgSrc }}" alt="{{ $shoe->name }}" class="w-full aspect-square object-cover rounded-xl mb-4 border border-slate-100 shadow-sm">
+                <img id="mainImage" src="{{ $mainImgSrc }}" alt="{{ $shoe->name }}" class="w-full aspect-square object-cover rounded-xl mb-4 border border-slate-100 shadow-sm transition-all duration-300">
                 
                 @if($shoe->images->count() > 1)
                 <div class="flex gap-4 overflow-x-auto pb-2">
@@ -27,7 +27,7 @@
                         @php 
                             $thumbSrc = str_starts_with($img->image_url, 'http') ? $img->image_url : asset('images/' . $img->image_url); 
                         @endphp
-                        <img src="{{ $thumbSrc }}" alt="Thumbnail" class="w-20 h-20 aspect-square object-cover rounded-lg border-2 border-transparent hover:border-orange-500 cursor-pointer transition">
+                        <img src="{{ $thumbSrc }}" alt="Thumbnail" onclick="document.getElementById('mainImage').src = this.src" class="w-20 h-20 aspect-square object-cover rounded-lg border-2 border-transparent hover:border-orange-500 cursor-pointer transition">
                     @endforeach
                 </div>
                 @endif
@@ -41,6 +41,22 @@
                 </p>
                 
                 <p class="text-4xl text-orange-600 font-black mb-6">{{ number_format($shoe->price, 0, ',', '.') }} ₫</p>
+                @php 
+                    $totalStock = $shoe->variants->sum('stock_quantity'); 
+                @endphp
+                <div class="mb-6">
+                    @if($totalStock > 0)
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-green-100 text-green-700 border border-green-200">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Còn sẵn {{ $totalStock }} sản phẩm
+                        </span>
+                    @else
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-red-100 text-red-700 border border-red-200">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            Tạm thời hết hàng
+                        </span>
+                    @endif
+                </div>
                 
                 <div class="prose text-slate-600 mb-8 leading-relaxed">
                     <p>{{ $shoe->description }}</p>
