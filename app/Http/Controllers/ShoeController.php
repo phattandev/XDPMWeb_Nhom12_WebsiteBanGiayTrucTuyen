@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Shoe;
 use App\Models\Category;
 use App\Models\Brand;
+// Thêm model ShoeVariant để lấy danh sách màu và size
+use App\Models\ShoeVariant;
 
 class ShoeController extends Controller
 {
@@ -16,16 +18,74 @@ class ShoeController extends Controller
         $query = Shoe::with(['images', 'brand', 'category']);
 
         // (Tương lai bạn có thể viết thêm code lọc theo giá, màu sắc, size ở đây)
+        // Lọc theo Danh mục (Category)
+        if ($request->filled('category')) {
+            $query->whereIn('category_id', (array) $request->category);
+        }
+
+        // Lọc theo Thương hiệu (Brand)
+        if ($request->filled('brand')) {
+            $query->whereIn('brand_id', (array) $request->brand);
+        }
+
+        // Lọc theo Màu sắc (Color) - Chọc vào bảng variants
+        if ($request->filled('color')) {
+            $query->whereHas('variants', function ($q) use ($request) {
+                $q->whereIn('color', (array) $request->color);
+            });
+        }
+
+        // Lọc theo Kích thước (Size) - Chọc vào bảng variants
+        if ($request->filled('size')) {
+            $query->whereHas('variants', function ($q) use ($request) {
+                $q->whereIn('size', (array) $request->size);
+            });
+        }
+
+        // Lọc theo Giá (Mức giá thấp nhất - cao nhất)
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Sắp xếp sản phẩm (Sort)
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'price_asc':
+                    $query->orderBy('price', 'asc'); // Giá thấp đến cao
+                    break;
+                case 'price_desc':
+                    $query->orderBy('price', 'desc'); // Giá cao đến thấp
+                    break;
+                case 'best_selling':
+                    // Yêu cầu DB có cột sold_quantity hoặc join bảng orders. Tạm fallback theo id.
+                    $query->orderBy('id', 'asc'); 
+                    break;
+                case 'newest':
+                default:
+                    $query->orderBy('created_at', 'desc'); // Mới nhất
+                    break;
+            }
+        } else {
+            // Mặc định load vào là xem hàng mới nhất
+            $query->orderBy('created_at', 'desc'); 
+        }
 
         // Phân trang: mỗi trang hiển thị 12 đôi giày
-        $shoes = $query->paginate(12); 
+        $shoes = $query->paginate(12)->appends($request->query());
         
         // Lấy danh sách danh mục và thương hiệu để hiển thị ở bộ lọc (Sidebar)
         $categories = Category::all();
         $brands = Brand::all();
 
+        // Lấy danh sách màu và size duy nhất từ CSDL để hiển thị ra form lọc
+        $colors = ShoeVariant::select('color')->distinct()->pluck('color');
+        $sizes = ShoeVariant::select('size')->distinct()->orderBy('size')->pluck('size');
+
         // Trả về view (Lưu ý: thư mục view cũ của bạn vẫn tên là 'products')
-        return view('frontend.products.index', compact('shoes', 'categories', 'brands'));
+        return view('frontend.products.index', compact('shoes', 'categories', 'brands', 'colors', 'sizes'));
     }
 
     // Hiển thị chi tiết một đôi giày
