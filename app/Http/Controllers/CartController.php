@@ -7,52 +7,64 @@ use App\Models\Shoe;
 
 class CartController extends Controller
 {
-    // Hiển thị giỏ hàng
+
     public function index()
     {
         $cart = session()->get('cart', []);
         return view('frontend.cart.index', compact('cart'));
     }
 
-    // Thêm sản phẩm vào giỏ
+
     public function add(Request $request)
     {
-        $shoe = Shoe::findOrFail($request->shoe_id);
+        $shoe = Shoe::with('images')->findOrFail($request->shoe_id);
 
         $cart = session()->get('cart', []);
 
+
+        $primaryImage = $shoe->images->where('is_primary', 1)->first();
+
+        $image = $primaryImage 
+            ? (str_starts_with($primaryImage->image_url, 'http') 
+                ? $primaryImage->image_url 
+                : asset('images/' . $primaryImage->image_url))
+            : 'https://via.placeholder.com/100';
+
+
         if (isset($cart[$shoe->id])) {
-            $cart[$shoe->id]['quantity']++;
+            $cart[$shoe->id]['quantity'] += $request->quantity ?? 1;
         } else {
+
             $cart[$shoe->id] = [
                 'name' => $shoe->name,
                 'price' => $shoe->price,
-                'quantity' => 1,
-                'image' => $shoe->image ?? '',
-                'size' => $request->size ?? ''
+                'quantity' => $request->quantity ?? 1,
+                'image' => $image,
             ];
         }
 
         session()->put('cart', $cart);
 
         return redirect()->route('cart.index')
-            ->with('success', 'Đã thêm vào giỏ hàng');
+            ->with('success', 'Đã thêm vào giỏ hàng!');
     }
 
-    // Cập nhật số lượng
+
     public function update(Request $request)
     {
         $cart = session()->get('cart', []);
 
         if (isset($cart[$request->id])) {
-            $cart[$request->id]['quantity'] = max(1, $request->quantity);
+            $quantity = max(1, (int)$request->quantity);
+            $cart[$request->id]['quantity'] = $quantity;
+
             session()->put('cart', $cart);
         }
 
         return back();
     }
 
-    // Xóa sản phẩm
+
     public function remove(Request $request)
     {
         $cart = session()->get('cart', []);
@@ -63,5 +75,12 @@ class CartController extends Controller
         }
 
         return back();
+    }
+
+
+    public function clear()
+    {
+        session()->forget('cart');
+        return back()->with('success', 'Đã xóa toàn bộ giỏ hàng!');
     }
 }

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone', 20)->nullable();
             $table->string('address', 255)->nullable();
-            $table->enum('role', ['admin', 'customer'])->default('customer');
+            $table->string('role', 20)->default('customer');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
