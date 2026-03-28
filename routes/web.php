@@ -8,6 +8,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ContactController;
+
 // CÁC TRANG CÔNG KHAI (Ai cũng xem được)
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -65,4 +67,16 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     // Route::resource('shoes', App\Http\Controllers\Admin\ShoeController::class);
     // Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
     // Route::resource('orders', App\Http\Controllers\Admin\OrderController::class);
+    
+    // Route contact liên hệ (Admin xem danh sách contact)
+    Route::get('/contacts', [App\Http\Controllers\ContactController::class, 'index'])->name('admin.contacts');
 });
+
+// Trang liên hệ
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// Admin - Đánh dấu đã đọc
+Route::post('/contacts/{id}/read', [App\Http\Controllers\ContactController::class, 'markAsRead'])->name('admin.contacts.read');

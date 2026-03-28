@@ -18,6 +18,7 @@
             <a href="#" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition">Quản lý Sản phẩm</a>
             <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition ">Quản lý Đơn hàng</a>
             <a href="#" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition">Quản lý Khách hàng</a>
+            <a href="{{ route('admin.contacts') }}" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition">Quản lý Liên hệ</a>
         </nav>
     </aside>
 

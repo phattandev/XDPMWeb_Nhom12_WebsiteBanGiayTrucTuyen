@@ -10,6 +10,7 @@
     @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-primary">Danh sách đơn hàng</h2>
         <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">Về trang chủ</a>
