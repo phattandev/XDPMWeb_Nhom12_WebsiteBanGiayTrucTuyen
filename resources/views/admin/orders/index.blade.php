@@ -1,67 +1,51 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Quản lý đơn hàng - Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-<div class="container mt-5">
-    @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+@extends('layouts.admin')
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-primary">Danh sách đơn hàng</h2>
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">Về trang chủ</a>
-    </div>
-
-    <div class="card shadow">
-        <div class="card-body">
-            <table class="table table-hover">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Khách hàng (ID)</th>
-                        <th>Tổng tiền</th>
-                        <th>Địa chỉ</th>
-                        <th>Thanh toán</th>
-                        <th>Trạng thái</th>
-                        <th>Ngày đặt</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($orders as $order)
-                    <tr>
-                        <td>#{{ $order->id }}</td>
-                        <td>User #{{ $order->user_id }}</td>
-                        <td class="fw-bold text-danger">{{ number_format($order->total_amount) }}đ</td>
-                        <td>{{ $order->shipping_address }}</td>
-                        <td><span class="badge bg-info">{{ $order->payment_method }}</span></td>
-                        <td>
-                            <span class="badge {{ $order->status == 'Pending' ? 'bg-warning' : 'bg-success' }}">
-                                {{ $order->status }}
-                            </span>
-                        </td>
-                        <td>{{ $order->order_date }}</td>
-                    <td>
-                    <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-sm btn-primary">Xem</a>
-                    @if($order->status == 'Pending')
-                        <form action="{{ route('admin.orders.approve', $order->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Bạn có chắc muốn duyệt đơn này?')">Duyệt</button>
-                        </form>
-                    @else
-                        <button class="btn btn-sm btn-secondary" disabled>Đã duyệt</button>
-                    @endif
-                </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
+@section('content')
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-800">Quản lý Đơn hàng</h1>
 </div>
-</body>
-</html>
+
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+    <table class="min-w-full divide-y divide-slate-200">
+        <thead class="bg-slate-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Mã ĐH</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Khách hàng</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Ngày đặt</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Tổng tiền</th>
+                <th class="px-6 py-3 text-center text-xs font-bold text-slate-500 uppercase">Trạng thái</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-slate-500 uppercase">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+            @foreach($orders as $order)
+            <tr class="hover:bg-slate-50">
+                <td class="px-6 py-4 text-sm font-medium text-slate-900">#{{ $order->id }}</td>
+                <td class="px-6 py-4 text-sm text-slate-500">{{ $order->user->name ?? 'Khách vãng lai' }}</td>
+                <td class="px-6 py-4 text-sm text-slate-500">{{ \Carbon\Carbon::parse($order->order_date)->format('d/m/Y H:i') }}</td>
+                <td class="px-6 py-4 text-sm font-bold text-orange-600">{{ number_format($order->total_amount, 0, ',', '.') }}đ</td>
+                <td class="px-6 py-4 text-center">
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full border 
+                        {{ $order->status == 'Pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : '' }}
+                        {{ $order->status == 'Processing' ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}
+                        {{ $order->status == 'Shipped' ? 'bg-indigo-100 text-indigo-800 border-indigo-200' : '' }}
+                        {{ $order->status == 'Delivered' ? 'bg-green-100 text-green-800 border-green-200' : '' }}
+                        {{ $order->status == 'Cancelled' ? 'bg-red-100 text-red-800 border-red-200' : '' }}">
+                        {{ $order->status }}
+                    </span>
+                </td>
+                <td class="px-6 py-4 text-right text-sm font-medium">
+                    <a href="{{ route('admin.orders.show', $order->id) }}" class="text-orange-600 hover:text-orange-900 bg-orange-50 px-3 py-1.5 rounded-md">Xem chi tiết</a>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+    
+    @if($orders->hasPages())
+        <div class="p-4 border-t border-slate-200">
+            {{ $orders->links() }}
+        </div>
+    @endif
+</div>
+@endsection

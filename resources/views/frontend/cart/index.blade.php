@@ -108,7 +108,7 @@
                     </span>
                 </div>
 
-                <a href="{{ route('checkout') }}" 
+                <a href="{{ route('checkout.index') }}" 
                    class="block mt-4 bg-orange-600 text-white text-center py-3 rounded-lg font-bold hover:bg-orange-700 transition">
                     Thanh toán
                 </a>

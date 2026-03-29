@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Shoe;
+use App\Models\ShoeVariant;
 
 class CartController extends Controller
 {
@@ -17,12 +18,17 @@ class CartController extends Controller
 
     public function add(Request $request)
     {
+        $request->validate([
+            'shoe_id' => 'required|exists:shoes,id',
+            'shoe_variant_id' => 'required|exists:shoe_variants,id',
+            'quantity' => 'required|integer|min:1'
+        ]);
         $shoe = Shoe::with('images')->findOrFail($request->shoe_id);
-
+        $variant = ShoeVariant::findOrFail($request->shoe_variant_id);
         $cart = session()->get('cart', []);
 
 
-        $primaryImage = $shoe->images->where('is_primary', 1)->first();
+        $primaryImage = $shoe->images->where('is_primary', true)->first() ?? $shoe->first();
 
         $image = $primaryImage 
             ? (str_starts_with($primaryImage->image_url, 'http') 
@@ -31,15 +37,18 @@ class CartController extends Controller
             : 'https://via.placeholder.com/100';
 
 
-        if (isset($cart[$shoe->id])) {
-            $cart[$shoe->id]['quantity'] += $request->quantity ?? 1;
+        if (isset($cart[$variant->id])) {
+            $cart[$variant->id]['quantity'] += $request->quantity ?? 1;
         } else {
 
-            $cart[$shoe->id] = [
+            $cart[$variant->id] = [
+                'shoe_id' => $shoe->id,
                 'name' => $shoe->name,
                 'price' => $shoe->price,
                 'quantity' => $request->quantity ?? 1,
                 'image' => $image,
+                'color' => $variant->color,
+                'size' => $variant->size,
             ];
         }
 
@@ -63,7 +72,6 @@ class CartController extends Controller
 
         return back();
     }
-
 
     public function remove(Request $request)
     {

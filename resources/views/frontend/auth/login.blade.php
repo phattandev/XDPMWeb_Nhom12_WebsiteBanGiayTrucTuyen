@@ -39,14 +39,6 @@
             </div>
 
             <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <input id="remember" name="remember" type="checkbox"
-                        class="h-4 w-4 text-orange-600 focus:ring-orange-500 border-slate-300 rounded cursor-pointer">
-                    <label for="remember" class="ml-2 block text-sm text-slate-700 cursor-pointer">
-                        Ghi nhớ đăng nhập
-                    </label>
-                </div>
-
                 <div class="text-sm">
                     <a href="#" class="font-semibold text-orange-600 hover:text-orange-500 transition">
                         Quên mật khẩu?

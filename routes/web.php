@@ -47,36 +47,39 @@ Route::middleware('auth')->group(function () {
     
     // Quản lý đơn hàng cá nhân
     Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('my-orders');
-
+    Route::get('/my-orders/{id}', [OrderController::class, 'myOrderDetails'])->name('my-orders.show');
     // Thanh toán online (Dành cho bảng Payments mới thêm)
     Route::get('/payment/process/{order_id}', [PaymentController::class, 'process'])->name('payment.process');
+
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+    Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('my-orders');
 });
 
-// ADMIN (Yêu cầu đăng nhập & Role là 'admin')
-// Lưu ý: Bạn cần tạo một middleware 'admin' hoặc kiểm tra role trong constructor của Admin Controller
-Route::prefix('admin')->middleware(['auth'])->group(function () {
-    // Tạm thời comment lại hoặc tạo các controller này sau
-    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
-    // Route quản lý đơn hàng
-    Route::get('/orders', [App\Http\Controllers\OrderController::class, 'index'])->name('admin.orders.index');
-    // Route xem chi tiết đơn hàng
-    Route::get('/orders/{id}', [App\Http\Controllers\OrderController::class, 'show'])->name('admin.orders.show');
-   // Route bấm nút Duyệt đơn hàng (Dùng POST để bảo mật)
-    Route::post('/orders/{id}/approve', [App\Http\Controllers\OrderController::class, 'approve'])->name('admin.orders.approve');
-    // Route::resource('shoes', App\Http\Controllers\Admin\ShoeController::class);
-    // Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
-    // Route::resource('orders', App\Http\Controllers\Admin\OrderController::class);
+// ADMIN ROUTES (Đã chuẩn hóa)
+Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     
-    // Route contact liên hệ (Admin xem danh sách contact)
-    Route::get('/contacts', [App\Http\Controllers\ContactController::class, 'index'])->name('admin.contacts');
+    // Quản lý Sản phẩm
+    Route::resource('products', App\Http\Controllers\Admin\ProductController::class);
+    
+    // Quản lý Đơn hàng
+    Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{id}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{id}/status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+
+    Route::get('/contacts', [App\Http\Controllers\ContactController::class, 'index'])->name('contacts');
+    Route::post('/contacts/{id}/read', [App\Http\Controllers\ContactController::class, 'markAsRead'])->name('contacts.read');
+
+    // Quản lý Tài khoản (Thay thế cho đoạn customers cũ)
+    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::delete('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
 });
-
-// Trang liên hệ
-Route::get('/contact', function () {
-    return view('contact');
-})->name('contact');
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
-
-// Admin - Đánh dấu đã đọc
-Route::post('/contacts/{id}/read', [App\Http\Controllers\ContactController::class, 'markAsRead'])->name('admin.contacts.read');

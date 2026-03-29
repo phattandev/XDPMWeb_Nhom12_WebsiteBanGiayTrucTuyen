@@ -27,7 +27,7 @@ class AuthController extends Controller
             'password.required' => 'Vui lòng nhập mật khẩu.',
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             
             // nếu là admin, chuyển đến dashboard
@@ -36,7 +36,7 @@ class AuthController extends Controller
             
             }
             // nếu ko, chuyển đến home
-            return redirect()->intended(route('home'));
+            return redirect()->route('home');
         }
 
         return back()->withErrors([

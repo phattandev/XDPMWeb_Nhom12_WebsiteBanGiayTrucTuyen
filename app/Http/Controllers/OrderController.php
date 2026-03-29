@@ -4,29 +4,56 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    // Hàm hiển thị danh sách
     public function index()
     {
-        $orders = DB::table('orders')->orderBy('order_date', 'desc')->get();
+        $orders = Order::with('user')->orderBy('order_date', 'desc')->paginate(15);
         return view('admin.orders.index', compact('orders'));
     }
 
-    // Hàm Xem chi tiết phải nằm ngang hàng với index
     public function show($id)
     {
-        $order = DB::table('orders')->where('id', $id)->first();
+        $order = Order::with(['user', 'details.variant.shoe'])->findOrFail($id);
         return view('admin.orders.showorder', compact('order'));
     }
 
-    // Hàm Duyệt đơn cũng phải nằm ngang hàng, bên TRONG class
-    public function approve($id)
+    public function updateStatus(Request $request, $id)
     {
-        DB::table('orders')->where('id', $id)->update([
-            'status' => 'Shipped'
-        ]);
-        return redirect()->back()->with('success', 'Đã duyệt đơn hàng #'.$id.' thành công!');
+        $request->validate(['status' => 'required|in:Pending,Processing,Shipped,Delivered,Cancelled']);
+        
+        $order = Order::findOrFail($id);
+        $order->status = $request->status;
+        
+        // Nếu hủy đơn thì có thể viết code cộng lại số lượng tồn kho ở đây
+        
+        $order->save();
+
+        return back()->with('success', 'Đã cập nhật trạng thái đơn hàng thành: ' . $request->status);
+    }
+
+    public function myOrderDetails($id)
+    {
+        // Lấy đơn hàng, kèm theo chi tiết sản phẩm, biến thể, thông tin giày và hình ảnh
+        // Quan trọng: Phải có where('user_id', Auth::id()) để bảo mật, tránh khách này xem đơn khách khác
+        $order = Order::with(['details.variant.shoe.images'])
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
+
+        return view('frontend.account.order-details', compact('order'));
+    }
+
+    // Dành cho Customer xem lịch sử mua hàng
+    public function myOrders()
+    {
+        $orders = DB::table('orders')
+            ->where('user_id', Auth::id())
+            ->orderBy('order_date', 'desc')
+            ->get();
+            
+        return view('frontend.account.orders', compact('orders'));
     }
 }

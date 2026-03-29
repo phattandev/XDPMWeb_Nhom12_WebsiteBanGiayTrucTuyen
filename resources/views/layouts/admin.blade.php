@@ -14,11 +14,13 @@
             SHOE<span class="text-white">STORE</span> <span class="text-sm font-normal not-italic text-slate-400">ADMIN</span>
         </div>
         <nav class="flex-1 p-4 space-y-2">
-            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2.5 bg-orange-600 rounded-lg text-white font-medium shadow-md">Bảng điều khiển</a>
-            <a href="#" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition">Quản lý Sản phẩm</a>
-            <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition ">Quản lý Đơn hàng</a>
-            <a href="#" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition">Quản lý Khách hàng</a>
-            <a href="{{ route('admin.contacts') }}" class="block px-4 py-2.5 hover:bg-slate-800 rounded-lg text-slate-300 transition">Quản lý Liên hệ</a>
+            <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'bg-orange-600 text-white' : 'hover:bg-slate-800 text-slate-300' }} block px-4 py-2.5 rounded-lg font-medium transition shadow-sm">Bảng điều khiển</a>
+            
+            <a href="{{ route('admin.products.index') }}" class="{{ request()->routeIs('admin.products.*') ? 'bg-orange-600 text-white' : 'hover:bg-slate-800 text-slate-300' }} block px-4 py-2.5 rounded-lg font-medium transition">Quản lý Sản phẩm</a>
+            
+            <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders.*') ? 'bg-orange-600 text-white' : 'hover:bg-slate-800 text-slate-300' }} block px-4 py-2.5 rounded-lg font-medium transition">Quản lý Đơn hàng</a>
+            
+           <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'bg-orange-600 text-white' : 'hover:bg-slate-800 text-slate-300' }} block px-4 py-2.5 rounded-lg font-medium transition">Quản lý Tài khoản</a>
         </nav>
     </aside>
 

@@ -13,7 +13,7 @@
             
             <div>
                 @php 
-                    $primaryImage = $shoe->images->where('is_primary', 1)->first() ?? $shoe->images->first();
+                    $primaryImage = $shoe->images->where('is_primary', true)->first() ?? $shoe->images->first();
                     $mainImgSrc = 'https://via.placeholder.com/600x600?text=No+Image';
                     if($primaryImage) {
                         $mainImgSrc = str_starts_with($primaryImage->image_url, 'http') ? $primaryImage->image_url : asset('images/' . $primaryImage->image_url);
@@ -138,7 +138,7 @@
                 @foreach($relatedShoes as $related)
                     <a href="{{ route('shoes.show', $related->id) }}" class="block bg-white rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-200">
                         @php
-                            $relImage = $related->images->where('is_primary', 1)->first();
+                            $relImage = $related->images->where('is_primary', true)->first();
                             $relImgSrc = 'https://via.placeholder.com/300x300?text=No+Image';
                             if($relImage) {
                                 $relImgSrc = str_starts_with($relImage->image_url, 'http') ? $relImage->image_url : asset('images/' . $relImage->image_url);

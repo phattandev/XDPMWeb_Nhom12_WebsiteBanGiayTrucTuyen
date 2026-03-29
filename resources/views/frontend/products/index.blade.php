@@ -109,7 +109,7 @@
                     @forelse($shoes as $shoe)
                         <a href="{{ route('shoes.show', $shoe->id) }}" class="block bg-white rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-200">
                             @php
-                                $primaryImage = $shoe->images->where('is_primary', 1)->first();
+                                $primaryImage = $shoe->images->where('is_primary', true)->first();
                             @endphp
                             @if($primaryImage)
                                 @php

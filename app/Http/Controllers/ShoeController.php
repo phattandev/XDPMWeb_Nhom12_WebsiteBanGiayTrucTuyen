@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Shoe;
 use App\Models\Category;
 use App\Models\Brand;
-// Thêm model ShoeVariant để lấy danh sách màu và size
 use App\Models\ShoeVariant;
 
 class ShoeController extends Controller
