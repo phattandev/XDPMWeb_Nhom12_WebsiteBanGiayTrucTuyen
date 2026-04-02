@@ -1,50 +1,31 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers; 
 
+use App\Http\Controllers\Controller; 
 use Illuminate\Http\Request;
-use App\Models\Contact;
+use App\Models\Contact; 
 
 class ContactController extends Controller
 {
+    // Hiển thị form liên hệ cho khách
+    public function create()
+    {
+        return view('frontend.contact');
+    }
+
+    // Xử lý khi khách bấm gửi liên hệ
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'message' => 'required',
-    ], [
-            'name.required' => 'Vui lòng nhập tên',
-            'email.required' => 'Vui lòng nhập email',
-            'email.email' => 'Email không hợp lệ',
-            'message.required' => 'Vui lòng nhập nội dung',
-    ]);
-
-        Contact::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'message' => $request->message,
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
         ]);
 
-        return redirect()->back()->with('success', 'Gửi liên hệ thành công!');
-    }
+        Contact::create($request->all());
 
-    public function index()
-    {
-        $contacts = Contact::latest()->get();
-        return view('admin.contacts.index', compact('contacts'));
-    }
-
-    public function markAsRead($id)
-    {
-        $contact = Contact::findOrFail($id);
-
-        // đảo trạng thái
-        $contact->is_read = !$contact->is_read;
-
-        $contact->save();
-
-        return redirect()->back();
-
+        return redirect()->route('contact')->with('success', 'Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi sớm nhất!');
     }
 }

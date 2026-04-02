@@ -14,7 +14,21 @@
             <div class="flex justify-between h-16 items-center">
                 <div class="flex-shrink-0 flex items-center gap-6">
                     <a href="{{ route('home') }}" class="text-2xl font-black text-orange-600 tracking-tighter italic">SHOE<span class="text-slate-800">STORE</span></a>
-                    <a href="{{ route('shoes.index') }}" class="hidden md:block text-slate-600 hover:text-orange-600 font-medium transition">Sản phẩm</a>
+                    <!-- <a href="{{ route('shoes.index') }}" class="hidden md:block text-slate-600 hover:text-orange-600 font-medium transition">Sản phẩm</a> -->
+                     <div class="hidden md:flex items-center space-x-6 mt-1">
+                        <a href="{{ route('home') }}" class="font-medium transition {{ request()->routeIs('home') ? 'text-orange-600' : 'text-slate-600 hover:text-orange-600' }}">
+                            Trang chủ
+                        </a>
+                        <a href="{{ route('shoes.index') }}" class="font-medium transition {{ request()->routeIs('shoes.*') ? 'text-orange-600' : 'text-slate-600 hover:text-orange-600' }}">
+                            Sản phẩm
+                        </a>
+                        <a href="{{ route('about') }}" class="font-medium transition {{ request()->routeIs('about') ? 'text-orange-600' : 'text-slate-600 hover:text-orange-600' }}">
+                            Giới thiệu
+                        </a>
+                        <a href="{{ route('contact') }}" class="font-medium transition {{ request()->routeIs('contact') ? 'text-orange-600' : 'text-slate-600 hover:text-orange-600' }}">
+                            Liên hệ
+                        </a>
+                    </div>
                 </div>
                 
                 <div class="flex items-center space-x-6">

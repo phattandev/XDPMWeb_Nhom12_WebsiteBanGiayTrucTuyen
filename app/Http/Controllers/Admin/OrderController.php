@@ -4,77 +4,45 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Order; // Quan trọng: Phải gọi Model Order vào đây
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Order::with('user');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where('id', $search) // Tìm theo Mã đơn hàng chính xác
+                  ->orWhereHas('user', function ($q) use ($search) {
+                      $q->where('name', 'like', '%' . $search . '%'); // Hoặc tìm theo tên user
+                  });
+        }
+
+        $orders = $query->orderBy('order_date', 'desc')->paginate(15)->appends($request->query());
+        return view('admin.orders.index', compact('orders'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    // Hàm 1: Xem chi tiết đơn hàng
+    // Xem chi tiết đơn hàng
     public function show($id)
     {
-        // Lấy thông tin của 1 đơn hàng dựa vào ID
-        $order = DB::table('orders')->where('id', $id)->first();
+        $order = Order::with(['user', 'details.variant.shoe'])->findOrFail($id);
+        return view('admin.orders.showorder', compact('order'));
+    }
+
+    // Cập nhật trạng thái đơn hàng
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate(['status' => 'required|in:Pending,Processing,Shipped,Delivered,Cancelled']);
         
-        // Trả về giao diện chi tiết (mình sẽ tạo ở Bước 4)
-        return view('admin.orders.show', compact('order'));
-    }
-
-    // Hàm 2: Duyệt đơn hàng (Đổi trạng thái)
-    public function approve($id)
-    {
-        // Đổi trạng thái từ 'Pending' sang 'Shipped' (Đã giao hàng)
-        DB::table('orders')->where('id', $id)->update([
-            'status' => 'Shipped'
-        ]);
-
-        // Quay lại trang danh sách và báo thành công
-        return redirect()->back()->with('success', 'Đã duyệt đơn hàng #'.$id.' thành công!');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $order = Order::findOrFail($id);
+        $order->status = $request->status;
+        
+        // Nếu hủy đơn thì có thể viết code cộng lại số lượng tồn kho ở đây
+        
+        $order->save();
+        
+        return back()->with('success', 'Đã cập nhật trạng thái đơn hàng thành: ' . $request->status);
     }
 }

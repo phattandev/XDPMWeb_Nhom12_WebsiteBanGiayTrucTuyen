@@ -2,10 +2,23 @@
 
 @section('content')
 <div class="mb-6 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-slate-800">Quản lý Sản phẩm</h1>
-    <a href="{{ route('admin.products.create') }}" class="bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-lg transition shadow-sm">
-        + Thêm giày mới
-    </a>
+    <div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+        <h1 class="text-2xl font-bold text-slate-800">Quản lý Sản phẩm</h1><br>
+        <div class="flex items-center gap-4">
+            <!-- Form tìm kiếm -->
+            <form method="GET" action="{{ route('admin.products.index') }}" class="flex items-center">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Tìm tên sản phẩm..." 
+                    class="rounded-l-lg border-slate-300 focus:ring-orange-500 focus:border-orange-500 text-sm py-2 px-3 w-64">
+                <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 text-sm rounded-r-lg border border-slate-800 transition">
+                    Tìm
+                </button>
+            </form>
+
+            <a href="{{ route('admin.products.create') }}" class="bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-lg transition shadow-sm whitespace-nowrap">
+                + Thêm giày mới
+            </a>
+        </div>
+    </div>
 </div>
 
 @if(session('success'))

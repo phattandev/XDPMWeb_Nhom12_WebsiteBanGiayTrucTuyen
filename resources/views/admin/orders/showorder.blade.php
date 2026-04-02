@@ -29,7 +29,7 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h3 class="font-bold text-lg border-b pb-2 mb-4">Thông tin giao hàng</h3>
-        <p class="mb-2"><span class="text-slate-500">Tên KH:</span> {{ $order->user->name ?? 'Khách vãng lai' }}</p>
+        <p class="mb-2"><span class="text-slate-500">Tên KH:</span> {{ $order->user?->name ?? 'Khách vãng lai' }}</p>
         <p class="mb-2"><span class="text-slate-500">Địa chỉ:</span> {{ $order->shipping_address }}</p>
         <p class="mb-2"><span class="text-slate-500">Ngày đặt:</span> {{ \Carbon\Carbon::parse($order->order_date)->format('d/m/Y H:i') }}</p>
         <p><span class="text-slate-500">Thanh toán:</span> <strong class="text-orange-600">{{ $order->payment_method }}</strong></p>

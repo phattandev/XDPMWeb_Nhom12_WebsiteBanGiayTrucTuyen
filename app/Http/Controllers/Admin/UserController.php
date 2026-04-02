@@ -12,10 +12,20 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Lấy danh sách user có role là 'customer', mới nhất lên đầu
-        $users = User::where('role', 'customer')->orderBy('created_at', 'desc')->paginate(10);
+        $query = User::where('role', 'customer');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%')
+                  ->orWhere('phone', 'like', '%' . $search . '%');
+            });
+        }
+
+        $users = $query->orderBy('created_at', 'desc')->paginate(10)->appends($request->query());
         return view('admin.users.index', compact('users'));
     }
 

@@ -6,8 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class ShoeImage extends Model
 {
+    protected $fillable = [
+        'shoe_id', 
+        'image_url', 
+        'public_id', 
+        'is_primary'
+    ];
+
     public $timestamps = false;
-    protected $fillable = ['shoe_id', 'image_url', 'is_primary'];
 
     public function shoe()
     {

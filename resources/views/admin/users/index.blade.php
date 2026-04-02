@@ -2,7 +2,17 @@
 
 @section('content')
 <div class="mb-6 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-slate-800">Quản lý Tài khoản</h1>
+    <div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+        <h1 class="text-2xl font-bold text-slate-800">Quản lý Tài khoản</h1>
+        
+        <form method="GET" action="{{ route('admin.users.index') }}" class="flex items-center">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Tên, Email hoặc SĐT..." 
+                class="rounded-l-lg border-slate-300 focus:ring-orange-500 focus:border-orange-500 text-sm py-2 px-3 w-64">
+            <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 text-sm rounded-r-lg border border-slate-800 transition">
+                Tìm
+            </button>
+        </form>
+    </div>
 </div>
 
 @if(session('success'))

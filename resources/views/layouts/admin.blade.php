@@ -17,10 +17,14 @@
             <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'bg-orange-600 text-white' : 'hover:bg-slate-800 text-slate-300' }} block px-4 py-2.5 rounded-lg font-medium transition shadow-sm">Bảng điều khiển</a>
             
             <a href="{{ route('admin.products.index') }}" class="{{ request()->routeIs('admin.products.*') ? 'bg-orange-600 text-white' : 'hover:bg-slate-800 text-slate-300' }} block px-4 py-2.5 rounded-lg font-medium transition">Quản lý Sản phẩm</a>
+            <a href="{{ route('admin.categories.index') }}" class="{{ request()->routeIs('admin.categories.*') ? 'bg-orange-600 text-white' : 'hover:bg-slate-800 text-slate-300' }} block px-4 py-2.5 rounded-lg font-medium transition">Quản lý Danh mục</a>
+            <a href="{{ route('admin.brands.index') }}" class="{{ request()->routeIs('admin.brands.*') ? 'bg-orange-600 text-white' : 'hover:bg-slate-800 text-slate-300' }} block px-4 py-2.5 rounded-lg font-medium transition">Quản lý Thương hiệu</a>
             
             <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders.*') ? 'bg-orange-600 text-white' : 'hover:bg-slate-800 text-slate-300' }} block px-4 py-2.5 rounded-lg font-medium transition">Quản lý Đơn hàng</a>
             
            <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'bg-orange-600 text-white' : 'hover:bg-slate-800 text-slate-300' }} block px-4 py-2.5 rounded-lg font-medium transition">Quản lý Tài khoản</a>
+
+           <a href="{{ route('admin.contacts') }}" class="{{ request()->routeIs('admin.contacts*') ? 'bg-orange-600 text-white' : 'hover:bg-slate-800 text-slate-300' }} block px-4 py-2.5 rounded-lg font-medium transition">Quản lý Liên hệ</a>
         </nav>
     </aside>
 

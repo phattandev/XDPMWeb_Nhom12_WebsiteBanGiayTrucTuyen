@@ -13,7 +13,7 @@ class CheckoutController extends Controller
         if (!session()->has('cart') || count(session('cart')) == 0) {
             return redirect()->route('shoes.index')->with('error', 'Giỏ hàng của bạn đang trống!');
         }
-        return view('checkout.index');
+        return view('frontend.checkout.index');
     }
     public function process(Request $request)
     {
@@ -69,7 +69,7 @@ class CheckoutController extends Controller
             // 5. Xóa giỏ hàng sau khi đặt thành công
             session()->forget('cart');
 
-            return view('checkout.success', ['orderId' => $donHangId]);
+            return view('frontend.checkout.success', ['orderId' => $donHangId]);
 
         } catch (\Exception $e) {
             DB::rollBack(); // Hủy bỏ thao tác nếu có lỗi

@@ -12,10 +12,19 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Lấy danh sách giày kèm danh mục và thương hiệu, phân trang 10 sản phẩm/trang
-        $shoes = Shoe::with(['category', 'brand'])->orderBy('created_at', 'desc')->paginate(10);
+        $query = Shoe::with(['category', 'brand']);
+
+        // Nếu có từ khóa tìm kiếm
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+
+        // Lấy dữ liệu, sắp xếp mới nhất và giữ lại tham số tìm kiếm khi chuyển trang (appends)
+        $shoes = $query->orderBy('created_at', 'desc')->paginate(6)->appends($request->query());
+        
         return view('admin.products.index', compact('shoes'));
     }
 
@@ -34,7 +43,7 @@ class ProductController extends Controller
             'brand_id' => 'required|exists:brands,id',
             'price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validate mảng hình ảnh
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240', // Validate mảng hình ảnh
         ]);
 
         DB::beginTransaction();

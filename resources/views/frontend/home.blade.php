@@ -1,35 +1,63 @@
-<!-- Trang chủ -->
- @extends('layouts.app')
+@extends('layouts.app')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="bg-white rounded-2xl shadow-sm p-8 text-center border-t-4 border-orange-500">
-        <h1 class="text-3xl font-extrabold text-slate-800 mb-4">
-            Chào mừng đến với <span class="text-orange-600 italic">Shoe Store</span>!
+<!-- Hero Banner -->
+<div class="relative bg-slate-900 overflow-hidden">
+    <div class="absolute inset-0">
+        <img src="https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=1920&q=80" alt="Hero background" class="w-full h-full object-cover opacity-40">
+    </div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 flex flex-col items-center text-center">
+        <h1 class="text-4xl md:text-6xl font-black text-white tracking-tight mb-6">
+            BƯỚC ĐI <span class="text-orange-500">ĐỘT PHÁ</span>
         </h1>
-        <p class="text-slate-600 mb-8 text-lg">
-            Bạn đã đăng nhập thành công. Hãy bắt đầu khám phá những đôi giày tuyệt vời nhất.
+        <p class="mt-4 text-xl text-slate-300 max-w-2xl mb-10">
+            Khám phá bộ sưu tập giày mới nhất. Thể hiện phong cách cá nhân với những mẫu thiết kế độc quyền chỉ có tại Shoe Store.
         </p>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            <div class="p-6 bg-slate-50 rounded-xl border border-slate-100 hover:shadow-md transition cursor-pointer">
-                <div class="text-4xl mb-3">👟</div>
-                <h3 class="font-bold text-lg text-slate-800 mb-2">Giày Mới Về</h3>
-                <p class="text-sm text-slate-500">Khám phá bộ sưu tập giày thể thao và giày tây mới nhất.</p>
-            </div>
-            
-            <div class="p-6 bg-slate-50 rounded-xl border border-slate-100 hover:shadow-md transition cursor-pointer">
-                <div class="text-4xl mb-3">🔥</div>
-                <h3 class="font-bold text-lg text-slate-800 mb-2">Khuyến Mãi</h3>
-                <p class="text-sm text-slate-500">Săn ngay các mã giảm giá và ưu đãi lên đến 50%.</p>
-            </div>
-            
-            <div class="p-6 bg-slate-50 rounded-xl border border-slate-100 hover:shadow-md transition cursor-pointer">
-                <div class="text-4xl mb-3">📦</div>
-                <h3 class="font-bold text-lg text-slate-800 mb-2">Đơn Hàng</h3>
-                <p class="text-sm text-slate-500">Theo dõi trạng thái giao hàng các sản phẩm của bạn.</p>
-            </div>
+        <div class="flex gap-4">
+            <a href="{{ route('shoes.index') }}" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-full transition shadow-lg text-lg">
+                Mua Sắm Ngay
+            </a>
         </div>
+    </div>
+</div>
+
+<!-- Featured Categories -->
+<div class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-extrabold text-slate-900">Danh Mục Nổi Bật</h2>
+            <div class="w-16 h-1 bg-orange-600 mx-auto mt-4"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            @foreach($featuredCategories as $category)
+            <div class="relative group overflow-hidden rounded-2xl shadow-sm border border-slate-100 aspect-[4/3] bg-slate-100 flex items-center justify-center">
+                <!-- Tạm thời dùng hiệu ứng gradient thay cho ảnh danh mục vì trong DB chưa có cột ảnh danh mục -->
+                <div class="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 group-hover:scale-105 transition duration-500"></div>
+                <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-300"></div>
+                <div class="relative z-10 text-center p-6">
+                    <h3 class="text-2xl font-bold text-white mb-2">{{ $category->name }}</h3>
+                    <p class="text-orange-400 font-medium mb-4">{{ $category->shoes_count }} Sản phẩm</p>
+                    <a href="{{ route('shoes.index', ['category' => $category->id]) }}" class="inline-block border-2 border-white text-white font-semibold px-6 py-2 rounded-full hover:bg-white hover:text-slate-900 transition">
+                        Khám phá
+                    </a>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+
+<!-- Call To Action -->
+<div class="bg-orange-600 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between">
+        <div class="text-white mb-8 md:mb-0 text-center md:text-left">
+            <h2 class="text-3xl font-bold mb-2">Bạn cần tư vấn chọn giày?</h2>
+            <p class="text-orange-100 text-lg">Đội ngũ của chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7.</p>
+        </div>
+        <a href="{{ route('contact') }}" class="bg-white text-orange-600 font-bold py-3 px-8 rounded-lg hover:bg-slate-100 transition shadow-lg text-lg">
+            Liên Hệ Ngay
+        </a>
     </div>
 </div>
 @endsection

@@ -7,9 +7,44 @@ use App\Models\Shoe;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\ShoeVariant;
+use App\Models\ShoeImage;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ShoeController extends Controller
 {
+    public function store(Request $request)
+{
+    // 1. Lưu thông tin chung của giày trước (code cũ của bạn)
+    $shoe = new Shoe();
+    $shoe->name = $request->name;
+    // ...
+    $shoe->save(); 
+
+    // 2. Xử lý lưu HÌNH ẢNH lên Cloudinary
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $index => $image) {
+            
+            // Đẩy file lên Cloudinary, gom vào thư mục 'shoes_store' cho gọn
+            $cloudinaryImage = Cloudinary::upload($image->getRealPath(), [
+                'folder' => 'shoes_store'
+            ]);
+
+            // Lấy URL và Public ID từ Cloudinary trả về
+            $imageUrl = $cloudinaryImage->getSecurePath();
+            $publicId = $cloudinaryImage->getPublicId();
+
+            // Lưu thông tin vào bảng shoe_images
+            ShoeImage::create([
+                'shoe_id' => $shoe->id,
+                'image_url' => $imageUrl,
+                'public_id' => $publicId,
+                'is_primary' => $index === 0 ? true : false, // Ảnh đầu tiên sẽ làm ảnh bìa
+            ]);
+        }
+    }
+
+    return redirect()->route('admin.shoes.index')->with('success', 'Thêm giày và upload ảnh thành công!');
+}
     // Hiển thị danh sách tất cả các loại giày (Trang Cửa hàng)
     public function index(Request $request)
     {
