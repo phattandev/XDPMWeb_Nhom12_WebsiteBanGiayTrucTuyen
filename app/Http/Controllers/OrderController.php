@@ -29,4 +29,19 @@ class OrderController extends Controller
             
         return view('frontend.account.orders', compact('orders'));
     }
+    public function index()
+    {
+    // Thêm with('payment') vào để nó lấy được trạng thái MoMo
+    $orders = Order::with(['user', 'payment'])->orderBy('id', 'desc')->get();
+    
+    
+    return view('admin.orders.showorder', compact('orders')); 
+    }
+
+    public function show($id)
+{
+    // Bắt buộc phải có with('payment')
+    $order = Order::with(['details.variant.shoe', 'user', 'payment'])->findOrFail($id); 
+    return view('admin.orders.showorder', compact('order'));
+}
 }
