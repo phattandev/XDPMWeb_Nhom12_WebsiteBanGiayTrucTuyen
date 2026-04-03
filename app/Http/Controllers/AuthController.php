@@ -28,14 +28,23 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
+            // KIỂM TRA TÀI KHOẢN CÓ BỊ KHÓA KHÔNG
+            if (Auth::user()->is_locked) {
+                Auth::logout(); // Đăng xuất luôn
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                
+                return back()->withErrors([
+                    'email' => 'Tài khoản của bạn đã bị khóa do vi phạm. Vui lòng liên hệ Admin!',
+                ])->onlyInput('email');
+            }
+
             $request->session()->regenerate();
             
-            // nếu là admin, chuyển đến dashboard
             if (Auth::user()->role === 'admin') {
                 return redirect()->route('admin.dashboard');
-            
             }
-            // nếu ko, chuyển đến home
+            
             return redirect()->route('home');
         }
 
@@ -44,13 +53,11 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    // show form đăng ký
     public function showRegister()
     {
         return view('frontend.auth.register');
     }
 
-    // xử lý đăng ký 
     public function processRegister(Request $request)
     {
         $validated = $request->validate([
@@ -82,7 +89,6 @@ class AuthController extends Controller
         return redirect()->route('home');
     }
 
-    // Xử lý đăng xuất
     public function logout(Request $request)
     {
         Auth::logout();

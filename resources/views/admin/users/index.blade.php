@@ -41,22 +41,35 @@
                     <div class="text-sm text-slate-500">{{ $user->email }}</div>
                     <div class="text-sm text-slate-500">{{ $user->phone ?? 'Chưa có SĐT' }}</div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <!-- <td class="px-6 py-4 whitespace-nowrap">
                     @if($user->role === 'admin')
                         <span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full border border-purple-200">Quản trị viên</span>
                     @else
                         <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full border border-slate-200">Khách hàng</span>
+                    @endif
+                </td> -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                    @if($user->role === 'admin')
+                        <span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full border border-purple-200">Quản trị viên</span>
+                    @else
+                        @if($user->is_locked)
+                            <span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full border border-red-200">Bị khóa</span>
+                        @else
+                            <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full border border-green-200">Hoạt động</span>
+                        @endif
                     @endif
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                     {{ $user->created_at->format('d/m/Y') }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?');">
+                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái tài khoản này?');">
                         @csrf
                         @method('DELETE')
                         @if(Auth::id() !== $user->id)
-                            <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md transition">Khóa</button>
+                            <button type="submit" class="{{ $user->is_locked ? 'text-green-600 bg-green-50 hover:bg-green-100' : 'text-red-600 bg-red-50 hover:bg-red-100' }} px-3 py-1.5 rounded-md transition font-medium">
+                                {{ $user->is_locked ? 'Mở khóa' : 'Khóa' }}
+                            </button>
                         @endif
                     </form>
                 </td>

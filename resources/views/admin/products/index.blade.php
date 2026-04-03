@@ -53,11 +53,17 @@
                     {{ number_format($shoe->price, 0, ',', '.') }} ₫
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <form action="{{ route('admin.products.destroy', $shoe->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md transition">Xóa</button>
-                    </form>
+                    <div class="flex justify-end gap-2">
+                        <a href="{{ route('admin.products.edit', $shoe->id) }}" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md transition">
+                            Sửa
+                        </a>
+
+                        <form action="{{ route('admin.products.destroy', $shoe->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md transition">Xóa</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             @empty

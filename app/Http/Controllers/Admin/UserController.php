@@ -76,12 +76,16 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         
-        // Không cho phép Admin tự xóa chính mình để tránh sập hệ thống
+        // Không cho phép Admin tự khóa chính mình
         if (Auth::id() == $id) {
             return back()->with('error', 'Bạn không thể tự khóa tài khoản của chính mình!');
         }
 
-        $user->delete();
-        return back()->with('success', 'Đã khóa tài khoản thành công!');
+        // Đảo ngược trạng thái khóa (Khóa -> Mở khóa, Mở khóa -> Khóa)
+        $user->is_locked = !$user->is_locked;
+        $user->save();
+
+        $message = $user->is_locked ? 'Đã khóa tài khoản thành công!' : 'Đã mở khóa tài khoản!';
+        return back()->with('success', $message);
     }
 }
