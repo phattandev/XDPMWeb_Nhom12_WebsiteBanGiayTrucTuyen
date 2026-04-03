@@ -29,6 +29,29 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h3 class="font-bold text-lg border-b pb-2 mb-4">Thông tin giao hàng</h3>
+        <div class="mt-3 pt-3 border-t border-slate-100">
+    <p class="flex items-center gap-2 mb-1">
+        <span class="text-slate-500">Trạng thái tiền:</span>
+        @if($order->payment && $order->payment->payment_status == 'Completed')
+            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200">
+                ✅ Đã nhận tiền MoMo
+            </span>
+        @elseif($order->payment && $order->payment->payment_status == 'Pending')
+            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold border border-yellow-200">
+                ⏳ Đang chờ khách quét mã
+            </span>
+        @else
+            <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-bold border border-slate-200">
+                Thanh toán khi nhận hàng (COD)
+            </span>
+        @endif
+    </p>
+    
+    {{-- Hiển thị mã giao dịch nếu có --}}
+    @if($order->payment && $order->payment->transaction_id)
+        <p class="text-xs text-slate-400 pl-[100px]">Mã GD: {{ $order->payment->transaction_id }}</p>
+    @endif
+</div>
         <p class="mb-2"><span class="text-slate-500">Tên KH:</span> {{ $order->user?->name ?? 'Khách vãng lai' }}</p>
         <p class="mb-2"><span class="text-slate-500">Địa chỉ:</span> {{ $order->shipping_address }}</p>
         <p class="mb-2"><span class="text-slate-500">Ngày đặt:</span> {{ \Carbon\Carbon::parse($order->order_date)->format('d/m/Y H:i') }}</p>

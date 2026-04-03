@@ -57,10 +57,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-orders/{id}', [OrderController::class, 'myOrderDetails'])->name('my-orders.show');
     // Thanh toán online (Dành cho bảng Payments mới thêm)
     Route::get('/payment/process/{order_id}', [PaymentController::class, 'process'])->name('payment.process');
-
+   // Thanh Toán Bằng Momo
+   Route::post('/thanh-toan-momo', [\App\Http\Controllers\PaymentController::class, 'momoPayment'])->name('momo.payment');
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
-    
+    //quay lại trang chủ sau khi thanh toán thành công
+    Route::get('/thanh-toan-thanh-cong', [\App\Http\Controllers\PaymentController::class, 'momoReturn']);
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');

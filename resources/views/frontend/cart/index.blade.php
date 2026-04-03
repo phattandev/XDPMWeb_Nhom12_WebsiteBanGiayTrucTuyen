@@ -108,10 +108,16 @@
                     </span>
                 </div>
 
-                <a href="{{ route('checkout.index') }}" 
-                   class="block mt-4 bg-orange-600 text-white text-center py-3 rounded-lg font-bold hover:bg-orange-700 transition">
-                    Thanh toán
-                </a>
+                <form action="{{ route('momo.payment') }}" method="POST">
+    @csrf
+    <button type="submit" style="background-color: #ae2070; color: white;" class="w-full mt-4 font-bold py-3 px-4 rounded-lg shadow-md hover:opacity-80 transition-opacity flex items-center justify-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M4 10a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0v-2zm3 0a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0v-2zm3 0a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0v-2z"/>
+        <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2zm0 1h12a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/>
+    </svg>
+    Thanh toán qua MoMo
+</button>
+</form>
             </div>
         </div>
 
