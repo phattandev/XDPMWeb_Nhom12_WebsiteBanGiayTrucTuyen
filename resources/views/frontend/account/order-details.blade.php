@@ -12,17 +12,7 @@
                 </a>
                 <h1 class="text-3xl font-bold text-slate-900 flex items-center gap-3">
                     Chi tiết đơn hàng #{{ $order->id }}
-                    @if($order->status == 'Pending')
-                        <span class="bg-yellow-100 text-yellow-800 text-sm font-bold px-3 py-1 rounded-full border border-yellow-200">Đang chờ duyệt</span>
-                    @elseif($order->status == 'Processing')
-                        <span class="bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full border border-blue-200">Đang xử lý</span>
-                    @elseif($order->status == 'Shipped')
-                        <span class="bg-indigo-100 text-indigo-800 text-sm font-bold px-3 py-1 rounded-full border border-indigo-200">Đang giao hàng</span>
-                    @elseif($order->status == 'Delivered')
-                        <span class="bg-green-100 text-green-800 text-sm font-bold px-3 py-1 rounded-full border border-green-200">Hoàn thành</span>
-                    @else
-                        <span class="bg-red-100 text-red-800 text-sm font-bold px-3 py-1 rounded-full border border-red-200">{{ $order->status }}</span>
-                    @endif
+                    <span class="{{ $order->status_badge_class }} text-sm font-bold px-3 py-1 rounded-full border">{{ $order->status_label }}</span>
                 </h1>
             </div>
             <div class="text-right text-slate-500">

@@ -12,6 +12,12 @@ class PaymentController extends Controller
 
 public function momoPayment(Request $request)
 {
+    $request->validate([
+        'ten_nguoi_nhan' => 'required|string|max:255',
+        'so_dien_thoai' => 'required|string|max:20',
+        'dia_chi_chi_tiet' => 'required|string',
+    ]);
+
     // --- BƯỚC 1: LẤY GIỎ HÀNG TỪ SESSION VÀ TÍNH TỔNG TIỀN ---
     $cart = session()->get('cart', []);
     if (empty($cart)) {
@@ -23,6 +29,8 @@ public function momoPayment(Request $request)
         $totalAmount += $item['price'] * $item['quantity'];
     }
 
+    $shippingAddress = $request->ten_nguoi_nhan . ' - ' . $request->so_dien_thoai . ' - ' . $request->dia_chi_chi_tiet;
+
     // --- BƯỚC 2: LƯU VÀO DATABASE (orders, order_details, payments) ---
     DB::beginTransaction();
     try {
@@ -30,7 +38,7 @@ public function momoPayment(Request $request)
         $orderId = DB::table('orders')->insertGetId([
             'user_id' => Auth::id() ?? 1, // Lấy ID user đang đăng nhập (hoặc mặc định là 1 nếu chưa đăng nhập)
             'total_amount' => $totalAmount,
-            'shipping_address' => $request->input('address', 'Địa chỉ mặc định'), // Nhớ tạo thẻ <input name="address"> ở form thanh toán nhé
+            'shipping_address' => $shippingAddress,
             'payment_method' => 'Momo',
             'status' => 'Pending',
             'order_date' => now()

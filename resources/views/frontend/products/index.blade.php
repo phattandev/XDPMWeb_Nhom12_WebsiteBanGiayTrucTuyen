@@ -35,7 +35,7 @@
                             @foreach($categories as $category)
                                 <label class="flex items-center space-x-3 cursor-pointer group">
                                     <input type="checkbox" name="category[]" value="{{ $category->id }}"
-                                        {{ in_array($category->id, request('category', [])) ? 'checked' : '' }}
+                                        {{ in_array($category->id, $selectedCategories ?? [], true) ? 'checked' : '' }}
                                         class="w-5 h-5 rounded border-slate-300 text-orange-600 focus:ring-orange-500 cursor-pointer">
                                     <span class="text-slate-600 group-hover:text-orange-600 transition-colors">{{ $category->name }}</span>
                                 </label>
@@ -49,7 +49,7 @@
                             @foreach($brands as $brand)
                                 <label class="flex items-center space-x-3 cursor-pointer group">
                                     <input type="checkbox" name="brand[]" value="{{ $brand->id }}"
-                                        {{ in_array($brand->id, request('brand', [])) ? 'checked' : '' }}
+                                        {{ in_array($brand->id, $selectedBrands ?? [], true) ? 'checked' : '' }}
                                         class="w-5 h-5 rounded border-slate-300 text-orange-600 focus:ring-orange-500 cursor-pointer">
                                     <span class="text-slate-600 group-hover:text-orange-600 transition-colors">{{ $brand->name }}</span>
                                 </label>
@@ -62,7 +62,7 @@
                         <div class="flex flex-wrap gap-2">
                             @foreach($colors as $color)
                                 <label class="cursor-pointer">
-                                    <input type="checkbox" name="color[]" value="{{ $color }}" {{ in_array($color, request('color', [])) ? 'checked' : '' }} class="peer sr-only">
+                                    <input type="checkbox" name="color[]" value="{{ $color }}" {{ in_array($color, $selectedColors ?? [], true) ? 'checked' : '' }} class="peer sr-only">
                                     <div class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 peer-checked:bg-orange-600 peer-checked:text-white hover:border-orange-400 transition-all">
                                         {{ $color }}
                                     </div>
@@ -76,7 +76,7 @@
                         <div class="grid grid-cols-4 gap-2">
                             @foreach($sizes as $size)
                                 <label class="cursor-pointer">
-                                    <input type="checkbox" name="size[]" value="{{ $size }}" {{ in_array($size, request('size', [])) ? 'checked' : '' }} class="peer sr-only">
+                                    <input type="checkbox" name="size[]" value="{{ $size }}" {{ in_array($size, $selectedSizes ?? [], true) ? 'checked' : '' }} class="peer sr-only">
                                     <div class="text-center py-1.5 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 peer-checked:bg-slate-900 peer-checked:text-white hover:border-slate-400 transition-all">
                                         {{ $size }}
                                     </div>

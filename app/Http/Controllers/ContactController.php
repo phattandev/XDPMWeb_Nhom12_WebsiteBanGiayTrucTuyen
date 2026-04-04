@@ -24,7 +24,7 @@ class ContactController extends Controller
             'message' => 'required|string',
         ]);
 
-        Contact::create($request->all());
+        Contact::create($request->only(['name', 'email', 'subject', 'message']));
 
         return redirect()->route('contact')->with('success', 'Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi sớm nhất!');
     }

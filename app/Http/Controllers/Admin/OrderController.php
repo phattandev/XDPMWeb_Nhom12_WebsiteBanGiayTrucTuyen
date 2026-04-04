@@ -14,10 +14,12 @@ class OrderController extends Controller
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where('id', $search) // Tìm theo Mã đơn hàng chính xác
-                  ->orWhereHas('user', function ($q) use ($search) {
-                      $q->where('name', 'like', '%' . $search . '%'); // Hoặc tìm theo tên user
-                  });
+            $query->where(function ($q) use ($search) {
+                $q->where('id', $search)
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->whereLike('name', '%' . $search . '%');
+                    });
+            });
         }
 
         $orders = $query->orderBy('order_date', 'desc')->paginate(15)->appends($request->query());

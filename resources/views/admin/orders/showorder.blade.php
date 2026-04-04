@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
+@php($statusLabels = \App\Models\Order::statusLabels())
 <div class="mb-6 flex justify-between items-center">
     <div>
         <a href="{{ route('admin.orders.index') }}" class="text-slate-500 hover:text-orange-600 transition mb-2 inline-block">← Quay lại</a>
@@ -10,11 +11,9 @@
     <form action="{{ route('admin.orders.updateStatus', $order->id) }}" method="POST" class="flex gap-2">
         @csrf
         <select name="status" class="rounded-lg border-slate-300 text-sm focus:ring-orange-500">
-            <option value="Pending" {{ $order->status == 'Pending' ? 'selected' : '' }}>Chờ duyệt (Pending)</option>
-            <option value="Processing" {{ $order->status == 'Processing' ? 'selected' : '' }}>Đang xử lý (Processing)</option>
-            <option value="Shipped" {{ $order->status == 'Shipped' ? 'selected' : '' }}>Đang giao (Shipped)</option>
-            <option value="Delivered" {{ $order->status == 'Delivered' ? 'selected' : '' }}>Hoàn thành (Delivered)</option>
-            <option value="Cancelled" {{ $order->status == 'Cancelled' ? 'selected' : '' }}>Đã hủy (Cancelled)</option>
+            @foreach($statusLabels as $value => $label)
+                <option value="{{ $value }}" {{ $order->status == $value ? 'selected' : '' }}>{{ $label }}</option>
+            @endforeach
         </select>
         <button type="submit" class="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-orange-700">Cập nhật</button>
     </form>
@@ -49,7 +48,7 @@
     
     {{-- Hiển thị mã giao dịch nếu có --}}
     @if($order->payment && $order->payment->transaction_id)
-        <p class="text-xs text-slate-400 pl-[100px]">Mã GD: {{ $order->payment->transaction_id }}</p>
+        <p class="text-xs text-slate-400 pl-25">Mã GD: {{ $order->payment->transaction_id }}</p>
     @endif
 </div>
         <p class="mb-2"><span class="text-slate-500">Tên KH:</span> {{ $order->user?->name ?? 'Khách vãng lai' }}</p>

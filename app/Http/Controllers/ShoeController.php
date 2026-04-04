@@ -9,6 +9,7 @@ use App\Models\Brand;
 use App\Models\ShoeVariant;
 use App\Models\ShoeImage;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Support\Arr;
 
 class ShoeController extends Controller
 {
@@ -25,13 +26,13 @@ class ShoeController extends Controller
         foreach ($request->file('images') as $index => $image) {
             
             // Đẩy file lên Cloudinary, gom vào thư mục 'shoes_store' cho gọn
-            $cloudinaryImage = Cloudinary::upload($image->getRealPath(), [
+            $cloudinaryImage = Cloudinary::uploadApi()->upload($image->getRealPath(), [
                 'folder' => 'shoes_store'
             ]);
 
             // Lấy URL và Public ID từ Cloudinary trả về
-            $imageUrl = $cloudinaryImage->getSecurePath();
-            $publicId = $cloudinaryImage->getPublicId();
+            $imageUrl = $cloudinaryImage['secure_url'] ?? $cloudinaryImage['url'] ?? null;
+            $publicId = $cloudinaryImage['public_id'] ?? null;
 
             // Lưu thông tin vào bảng shoe_images
             ShoeImage::create([
@@ -50,29 +51,33 @@ class ShoeController extends Controller
     {
         // Khởi tạo query lấy giày kèm hình ảnh và thương hiệu
         $query = Shoe::with(['images', 'brand', 'category']);
+        $selectedCategories = array_map('intval', Arr::wrap($request->input('category')));
+        $selectedBrands = array_map('intval', Arr::wrap($request->input('brand')));
+        $selectedColors = array_values(array_filter(Arr::wrap($request->input('color'))));
+        $selectedSizes = array_values(array_filter(Arr::wrap($request->input('size'))));
 
         // (Tương lai bạn có thể viết thêm code lọc theo giá, màu sắc, size ở đây)
         // Lọc theo Danh mục (Category)
-        if ($request->filled('category')) {
-            $query->whereIn('category_id', (array) $request->category);
+        if ($selectedCategories !== []) {
+            $query->whereIn('category_id', $selectedCategories);
         }
 
         // Lọc theo Thương hiệu (Brand)
-        if ($request->filled('brand')) {
-            $query->whereIn('brand_id', (array) $request->brand);
+        if ($selectedBrands !== []) {
+            $query->whereIn('brand_id', $selectedBrands);
         }
 
         // Lọc theo Màu sắc (Color) - Chọc vào bảng variants
-        if ($request->filled('color')) {
-            $query->whereHas('variants', function ($q) use ($request) {
-                $q->whereIn('color', (array) $request->color);
+        if ($selectedColors !== []) {
+            $query->whereHas('variants', function ($q) use ($selectedColors) {
+                $q->whereIn('color', $selectedColors);
             });
         }
 
         // Lọc theo Kích thước (Size) - Chọc vào bảng variants
-        if ($request->filled('size')) {
-            $query->whereHas('variants', function ($q) use ($request) {
-                $q->whereIn('size', (array) $request->size);
+        if ($selectedSizes !== []) {
+            $query->whereHas('variants', function ($q) use ($selectedSizes) {
+                $q->whereIn('size', $selectedSizes);
             });
         }
 
@@ -119,7 +124,17 @@ class ShoeController extends Controller
         $sizes = ShoeVariant::select('size')->distinct()->orderBy('size')->pluck('size');
 
         // Trả về view (Lưu ý: thư mục view cũ của bạn vẫn tên là 'products')
-        return view('frontend.products.index', compact('shoes', 'categories', 'brands', 'colors', 'sizes'));
+        return view('frontend.products.index', compact(
+            'shoes',
+            'categories',
+            'brands',
+            'colors',
+            'sizes',
+            'selectedCategories',
+            'selectedBrands',
+            'selectedColors',
+            'selectedSizes'
+        ));
     }
 
     // Hiển thị chi tiết một đôi giày

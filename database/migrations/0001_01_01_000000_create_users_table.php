@@ -21,8 +21,7 @@ return new class extends Migration
             $table->string('address', 255)->nullable();
             $table->string('role', 20)->default('customer');
             $table->boolean('is_locked')->default(false);
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
+            $table->timestamps();
         });
 
         // 2. Tạo bảng phục hồi mật khẩu (Mặc định của Laravel)

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,7 +21,7 @@ class OrderController extends Controller
     // Dành cho Customer xem lịch sử mua hàng
     public function myOrders()
     {
-        $orders = DB::table('orders')
+        $orders = Order::query()
             ->where('user_id', Auth::id())
             ->orderBy('order_date', 'desc')
             ->get();

@@ -35,13 +35,8 @@
                 <td class="px-6 py-4 text-sm text-slate-500">{{ \Carbon\Carbon::parse($order->order_date)->format('d/m/Y H:i') }}</td>
                 <td class="px-6 py-4 text-sm font-bold text-orange-600">{{ number_format($order->total_amount, 0, ',', '.') }}đ</td>
                 <td class="px-6 py-4 text-center">
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full border 
-                        {{ $order->status == 'Pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : '' }}
-                        {{ $order->status == 'Processing' ? 'bg-blue-100 text-blue-800 border-blue-200' : '' }}
-                        {{ $order->status == 'Shipped' ? 'bg-indigo-100 text-indigo-800 border-indigo-200' : '' }}
-                        {{ $order->status == 'Delivered' ? 'bg-green-100 text-green-800 border-green-200' : '' }}
-                        {{ $order->status == 'Cancelled' ? 'bg-red-100 text-red-800 border-red-200' : '' }}">
-                        {{ $order->status }}
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full border {{ $order->status_badge_class }}">
+                        {{ $order->status_label }}
                     </span>
                 </td>
                 <td class="px-6 py-4 text-right text-sm font-medium">

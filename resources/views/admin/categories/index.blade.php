@@ -48,7 +48,6 @@
         </form>
     </div>
 
-    <!-- KHU VỰC BẢNG (PHẢI) -->
     <div class="md:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <table class="min-w-full divide-y divide-slate-200">
             <thead class="bg-slate-50">
@@ -66,8 +65,13 @@
                     <td class="px-6 py-4 text-right text-sm">
                         <div class="flex justify-end gap-2">
                             
-                            <!-- NÚT SỬA: Gọi thẳng hàm JS và truyền ID + Tên vào -->
-                            <button type="button" onclick="editCategory({{ $cat->id }}, '{{ addslashes($cat->name) }}')" class="text-blue-600 hover:text-blue-900 bg-blue-50 px-3 py-1 rounded-md transition">
+                            <button
+                                type="button"
+                                data-category-id="{{ $cat->id }}"
+                                data-category-name="{{ $cat->name }}"
+                                onclick="editCategoryFromButton(this)"
+                                class="text-blue-600 hover:text-blue-900 bg-blue-50 px-3 py-1 rounded-md transition"
+                            >
                                 Sửa
                             </button>
                             
@@ -92,6 +96,13 @@
 
 <!-- ĐOẠN SCRIPT ĐIỀU KHIỂN FORM -->
 <script>
+    function editCategoryFromButton(button) {
+        editCategory(
+            button.getAttribute('data-category-id'),
+            button.getAttribute('data-category-name')
+        );
+    }
+
     function editCategory(id, name) {
         // 1. Đổi tiêu đề và chú thích
         document.getElementById('form-title').innerText = 'Sửa Danh Mục';

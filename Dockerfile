@@ -1,4 +1,4 @@
-# Sử dụng PHP 8.2 và Apache làm nền tảng
+# Sử dụng PHP 8.4 và Apache làm nền tảng
 FROM php:8.4-apache
 
 # 1. Cài đặt các công cụ hệ thống cần thiết
@@ -44,11 +44,11 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # 10. Cài đặt Node.js, cài thư viện Frontend và tiến hành Build (Vite/Tailwind)
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
-RUN npm install \
+RUN npm ci \
     && npm run build
 
 # 11. Mở cổng mạng
 EXPOSE 80
 
-# 12. Lệnh khởi chạy server (Tự động xóa cache, Migrate và Seed trước khi bật Apache)
-CMD bash -c "php artisan config:clear && php artisan migrate:fresh --force && php artisan db:seed --force && apache2-foreground"
+# 12. Lệnh khởi chạy server production-safe
+CMD bash -c "php artisan config:clear && php artisan migrate --force && if [ \"${RUN_PRODUCTION_SEEDER:-false}\" = \"true\" ]; then php artisan db:seed --class=ProductionSeeder --force; fi && apache2-foreground"

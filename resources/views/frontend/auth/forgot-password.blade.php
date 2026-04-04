@@ -1,1 +1,0 @@
-<!-- Quên mật khẩu / Đổi mật khẩu-->

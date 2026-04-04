@@ -10,10 +10,23 @@ class CheckoutController extends Controller
 {
     public function index()
     {
-        if (!session()->has('cart') || count(session('cart')) == 0) {
+        $cart = session()->get('cart', []);
+
+        if (empty($cart)) {
             return redirect()->route('shoes.index')->with('error', 'Giỏ hàng của bạn đang trống!');
         }
-        return view('frontend.checkout.index');
+
+        $subtotal = 0;
+        $totalQuantity = 0;
+
+        foreach ($cart as $item) {
+            $subtotal += $item['price'] * $item['quantity'];
+            $totalQuantity += $item['quantity'];
+        }
+
+        $user = Auth::user();
+
+        return view('frontend.checkout.index', compact('cart', 'subtotal', 'totalQuantity', 'user'));
     }
     public function process(Request $request)
     {
@@ -22,12 +35,16 @@ class CheckoutController extends Controller
             'ten_nguoi_nhan' => 'required|string|max:255',
             'so_dien_thoai' => 'required|string|max:20',
             'dia_chi_chi_tiet' => 'required|string',
-            'phuong_thuc_thanh_toan' => 'required|in:cod,vnpay'
+            'phuong_thuc_thanh_toan' => 'required|in:cod,momo'
         ]);
 
         $cart = session()->get('cart', []);
         if (empty($cart)) {
             return redirect()->route('home');
+        }
+
+        if ($request->phuong_thuc_thanh_toan === 'momo') {
+            return app(PaymentController::class)->momoPayment($request);
         }
 
         // 2. Tính tổng tiền thực tế từ Giỏ hàng
@@ -46,7 +63,7 @@ class CheckoutController extends Controller
                 'user_id'          => Auth::id(), // Lấy ID khách hàng đang đăng nhập
                 'total_amount'     => $tongTien,
                 'shipping_address' => $diaChiDayDu, 
-                'payment_method'   => $request->phuong_thuc_thanh_toan == 'cod' ? 'COD' : 'VNPay',
+                'payment_method'   => 'COD',
                 'status'           => 'Pending', 
                 'order_date'       => now(),
             ]);

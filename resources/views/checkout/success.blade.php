@@ -1,32 +1,35 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đặt hàng thành công</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <style>
-        body { background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .success-card { background: white; padding: 50px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; max-width: 500px; }
-        .icon-circle { width: 80px; height: 80px; background: #28a745; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 20px; }
-    </style>
-</head>
-<body>
+@extends('layouts.app')
 
-<div class="success-card">
-    <div class="icon-circle">
-        <i class="bi bi-check-lg"></i>
+@section('content')
+<div class="bg-slate-50 min-h-screen py-16">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 md:p-12 text-center">
+            <div class="w-20 h-20 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto text-4xl font-black">
+                ✓
+            </div>
+
+            <p class="mt-6 text-sm font-semibold tracking-[0.2em] uppercase text-orange-600">Đặt hàng thành công</p>
+            <h1 class="mt-3 text-3xl md:text-4xl font-black text-slate-900">Cảm ơn bạn đã mua sắm tại Shoe Store</h1>
+            <p class="mt-4 text-slate-500 leading-relaxed">
+                Đơn hàng của bạn đã được ghi nhận. Chúng tôi sẽ sớm liên hệ để xác nhận và chuẩn bị giao hàng.
+            </p>
+
+            <div class="mt-8 rounded-2xl border border-slate-200 bg-slate-50 px-6 py-5">
+                <p class="text-sm text-slate-500">Mã đơn hàng của bạn</p>
+                <p class="text-3xl font-black text-orange-600 mt-2">#{{ $orderId }}</p>
+            </div>
+
+            <div class="mt-8 flex flex-col sm:flex-row justify-center gap-3">
+                @if(Route::has('my-orders.show'))
+                    <a href="{{ route('my-orders.show', $orderId) }}" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-xl transition">
+                        Xem chi tiết đơn hàng
+                    </a>
+                @endif
+                <a href="{{ route('home') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 px-6 rounded-xl transition">
+                    Quay lại trang chủ
+                </a>
+            </div>
+        </div>
     </div>
-    <h1 class="text-success fw-bold">Thành Công!</h1>
-    <p class="fs-5 text-muted">Cảm ơn bạn đã mua sắm tại Shoe Store.</p>
-    <div class="alert alert-light border my-4">
-        Mã đơn hàng của bạn là: <strong>#{{ $orderId }}</strong>
-    </div>
-    <p class="small text-secondary">Chúng tôi sẽ sớm liên hệ với bạn để xác nhận đơn hàng.</p>
-    <hr>
-    <a href="/" class="btn btn-primary btn-lg px-5 mt-2">Quay lại trang chủ</a>
 </div>
-
-</body>
-</html>
+@endsection

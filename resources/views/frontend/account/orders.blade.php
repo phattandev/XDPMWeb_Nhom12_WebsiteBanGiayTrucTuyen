@@ -31,15 +31,7 @@
                             <td class="p-4 font-bold text-orange-600">{{ number_format($order->total_amount, 0, ',', '.') }} ₫</td>
                             <td class="p-4 text-slate-600">{{ $order->payment_method }}</td>
                             <td class="p-4 text-center">
-                                @if($order->status == 'Pending')
-                                    <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full border border-yellow-200">Đang chờ duyệt</span>
-                                @elseif($order->status == 'Shipped')
-                                    <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">Đang giao hàng</span>
-                                @elseif($order->status == 'Delivered')
-                                    <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full border border-green-200">Hoàn thành</span>
-                                @else
-                                    <span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full border border-red-200">{{ $order->status }}</span>
-                                @endif
+                                <span class="{{ $order->status_badge_class }} text-xs font-bold px-3 py-1 rounded-full border">{{ $order->status_label }}</span>
                             </td>
                         </tr>
                         @endforeach

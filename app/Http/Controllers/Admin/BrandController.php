@@ -26,6 +26,20 @@ class BrandController extends Controller
         return back()->with('success', 'Thêm Thương hiệu mới thành công!');
     }
 
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:100|unique:brands,name,' . $id,
+        ], [
+            'name.unique' => 'Tên thương hiệu này đã tồn tại!',
+        ]);
+
+        $brand = Brand::findOrFail($id);
+        $brand->update(['name' => $request->name]);
+
+        return redirect()->route('admin.brands.index')->with('success', 'Cập nhật thương hiệu thành công!');
+    }
+
     public function destroy($id)
     {
         Brand::findOrFail($id)->delete();

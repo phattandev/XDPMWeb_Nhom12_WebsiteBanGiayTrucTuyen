@@ -6,6 +6,12 @@
     <h1 class="text-2xl font-bold text-slate-800">Cập nhật Sản phẩm: <span class="text-orange-600">{{ $shoe->name }}</span></h1>
 </div>
 
+@if(session('error'))
+    <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-r-lg">
+        <p class="font-bold">LỖI HỆ THỐNG: {{ session('error') }}</p>
+    </div>
+@endif
+
 @if($errors->any())
     <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-r-lg">
         <ul class="list-disc pl-5">
@@ -28,7 +34,7 @@
             <label class="block text-sm font-medium text-slate-700 mb-2">Danh mục <span class="text-red-500">*</span></label>
             <select name="category_id" required class="w-full rounded-lg border-slate-300 focus:ring-orange-500 py-2.5 px-4 bg-white">
                 @foreach($categories as $cat)
-                    <option value="{{ $cat->id }}" {{ $shoe->category_id == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                    <option value="{{ $cat->id }}" {{ (int) old('category_id', $shoe->category_id) === $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -37,7 +43,7 @@
             <label class="block text-sm font-medium text-slate-700 mb-2">Thương hiệu <span class="text-red-500">*</span></label>
             <select name="brand_id" required class="w-full rounded-lg border-slate-300 focus:ring-orange-500 py-2.5 px-4 bg-white">
                 @foreach($brands as $brand)
-                    <option value="{{ $brand->id }}" {{ $shoe->brand_id == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
+                    <option value="{{ $brand->id }}" {{ (int) old('brand_id', $shoe->brand_id) === $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -47,9 +53,28 @@
             <input type="number" name="price" value="{{ old('price', $shoe->price) }}" required min="0" class="w-full rounded-lg border-slate-300 focus:ring-orange-500 py-2.5 px-4">
         </div>
         
-        <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">Thêm Hình ảnh mới (Tùy chọn)</label>
+        <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Hình ảnh hiện tại</label>
+            @if($shoe->images->count() > 0)
+                <div class="flex gap-4 flex-wrap mb-4">
+                    @foreach($shoe->images as $img)
+                        <div class="relative">
+                            <img src="{{ str_starts_with($img->image_url, 'http') ? $img->image_url : asset('images/' . $img->image_url) }}" class="w-24 h-24 object-cover border border-slate-200 rounded-lg shadow-sm">
+                            @if($img->is_primary)
+                                <span class="absolute top-0 left-0 bg-orange-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-br-lg rounded-tl-lg">Ảnh chính</span>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-sm text-slate-500 mb-4">Chưa có hình ảnh nào.</p>
+            @endif
+        </div>
+
+        <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Tải lên hình ảnh mới (Lưu ý: Sẽ thay thế toàn bộ ảnh cũ ở trên)</label>
             <input type="file" name="images[]" multiple accept="image/*" class="w-full rounded-lg border border-slate-300 bg-slate-50 py-2 px-4 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700">
+            <p class="text-xs text-slate-500 mt-1">Để trống nếu bạn chỉ muốn sửa tên, giá hoặc mô tả. Ảnh cũ chỉ bị thay khi ảnh mới tải lên thành công.</p>
         </div>
         
         <div class="md:col-span-2">
@@ -99,8 +124,8 @@
 </form>
 
 <script>
-    // Dùng biến count lớn hơn số lượng hiện tại để index mảng không bị trùng
-    let variantCount = {{ count($shoe->variants) }};
+    // Bọc trong nháy kép và dùng parseInt để ép về kiểu số
+    let variantCount = parseInt("{{ count($shoe->variants) }}", 10) || 0;
     
     function addVariantRow() {
         const container = document.getElementById('variants-container');

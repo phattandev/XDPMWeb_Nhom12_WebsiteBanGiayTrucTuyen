@@ -18,17 +18,29 @@
 @endif
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 h-fit">
-        <h3 class="text-lg font-bold text-slate-800 mb-4 pb-2 border-b">Thêm Thương Hiệu</h3>
-        <form action="{{ route('admin.brands.store') }}" method="POST">
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 h-fit transition-all duration-300" id="form-box">
+        <h3 class="text-lg font-bold text-slate-800 mb-1" id="form-title">Thêm Thương Hiệu Mới</h3>
+        <p class="text-xs text-slate-500 mb-4 pb-3 border-b border-slate-100 italic" id="form-hint">Nhấn "Sửa" ở danh sách bên phải để cập nhật.</p>
+
+        <form id="brand-form" action="{{ route('admin.brands.store') }}" method="POST">
             @csrf
+
+            <div id="method-container"></div>
+
             <div class="mb-4">
                 <label class="block text-sm font-medium text-slate-700 mb-2">Tên thương hiệu <span class="text-red-500">*</span></label>
-                <input type="text" name="name" required class="w-full rounded-lg border-slate-300 focus:ring-orange-500 py-2 px-3" placeholder="VD: Nike, Adidas, Puma...">
+                <input type="text" id="brand-name" name="name" required class="w-full rounded-lg border-slate-300 focus:ring-orange-500 focus:border-orange-500 py-2 px-3 transition-colors" placeholder="VD: Nike, Adidas, Puma...">
             </div>
-            <button type="submit" class="w-full bg-orange-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-700 transition">
-                + Lưu Thương Hiệu
-            </button>
+
+            <div class="flex gap-2">
+                <button type="submit" id="submit-btn" class="w-full bg-orange-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-700 transition">
+                    + Thêm Mới
+                </button>
+
+                <button type="button" id="cancel-btn" onclick="resetForm()" class="hidden w-1/3 bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-300 transition">
+                    Hủy
+                </button>
+            </div>
         </form>
     </div>
 
@@ -43,15 +55,27 @@
             </thead>
             <tbody class="divide-y divide-slate-200">
                 @forelse($brands as $brand)
-                <tr class="hover:bg-slate-50">
+                <tr class="hover:bg-slate-50 transition">
                     <td class="px-6 py-4 text-sm font-medium text-slate-900">#{{ $brand->id }}</td>
                     <td class="px-6 py-4 text-sm font-bold text-slate-800">{{ $brand->name }}</td>
                     <td class="px-6 py-4 text-right text-sm">
-                        <form action="{{ route('admin.brands.destroy', $brand->id) }}" method="POST" onsubmit="return confirm('Bạn chắc chắn muốn xóa thương hiệu này?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1 rounded-md">Xóa</button>
-                        </form>
+                        <div class="flex justify-end gap-2">
+                            <button
+                                type="button"
+                                data-brand-id="{{ $brand->id }}"
+                                data-brand-name="{{ $brand->name }}"
+                                onclick="editBrandFromButton(this)"
+                                class="text-blue-600 hover:text-blue-900 bg-blue-50 px-3 py-1 rounded-md transition"
+                            >
+                                Sửa
+                            </button>
+
+                            <form action="{{ route('admin.brands.destroy', $brand->id) }}" method="POST" onsubmit="return confirm('Bạn chắc chắn muốn xóa thương hiệu này?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1 rounded-md transition">Xóa</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @empty
@@ -64,4 +88,54 @@
         <div class="px-6 py-4 border-t border-slate-200">{{ $brands->links() }}</div>
     </div>
 </div>
+
+<script>
+    function editBrandFromButton(button) {
+        editBrand(
+            button.getAttribute('data-brand-id'),
+            button.getAttribute('data-brand-name')
+        );
+    }
+
+    function editBrand(id, name) {
+        document.getElementById('form-title').innerText = 'Sửa Thương Hiệu';
+        document.getElementById('form-title').classList.replace('text-slate-800', 'text-blue-600');
+        document.getElementById('form-hint').innerHTML = 'Đang chỉnh sửa: <span class="font-bold text-slate-800">' + name + '</span>';
+
+        document.getElementById('form-box').classList.add('border-blue-400', 'ring-4', 'ring-blue-50');
+
+        const inputName = document.getElementById('brand-name');
+        inputName.value = name;
+        inputName.focus();
+
+        document.getElementById('brand-form').action = "{{ url('admin/brands') }}/" + id;
+        document.getElementById('method-container').innerHTML = '<input type="hidden" name="_method" value="PUT">';
+
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.innerText = 'Cập nhật';
+        submitBtn.classList.replace('bg-orange-600', 'bg-blue-600');
+        submitBtn.classList.replace('hover:bg-orange-700', 'hover:bg-blue-700');
+
+        document.getElementById('cancel-btn').classList.remove('hidden');
+    }
+
+    function resetForm() {
+        document.getElementById('form-title').innerText = 'Thêm Thương Hiệu Mới';
+        document.getElementById('form-title').classList.replace('text-blue-600', 'text-slate-800');
+        document.getElementById('form-hint').innerText = 'Nhấn "Sửa" ở danh sách bên phải để cập nhật.';
+
+        document.getElementById('form-box').classList.remove('border-blue-400', 'ring-4', 'ring-blue-50');
+        document.getElementById('brand-name').value = '';
+
+        document.getElementById('brand-form').action = "{{ route('admin.brands.store') }}";
+        document.getElementById('method-container').innerHTML = '';
+
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.innerText = '+ Thêm Mới';
+        submitBtn.classList.replace('bg-blue-600', 'bg-orange-600');
+        submitBtn.classList.replace('hover:bg-blue-700', 'hover:bg-orange-700');
+
+        document.getElementById('cancel-btn').classList.add('hidden');
+    }
+</script>
 @endsection

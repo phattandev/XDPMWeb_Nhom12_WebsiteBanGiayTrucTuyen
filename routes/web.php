@@ -45,40 +45,26 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 
     // Đặt hàng & Thanh toán
-    // đơn hàng của customer
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    // Route hứng dữ liệu form POST lên
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
-    Route::post('/order/place', [OrderController::class, 'placeOrder'])->name('order.place');
-    Route::get('/order/success/{id}', [OrderController::class, 'success'])->name('order.success');
-    
+
     // Quản lý đơn hàng cá nhân
     Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('my-orders');
     Route::get('/my-orders/{id}', [OrderController::class, 'myOrderDetails'])->name('my-orders.show');
-    // Thanh toán online (Dành cho bảng Payments mới thêm)
-    Route::get('/payment/process/{order_id}', [PaymentController::class, 'process'])->name('payment.process');
-   // Thanh Toán Bằng Momo
-   Route::post('/thanh-toan-momo', [\App\Http\Controllers\PaymentController::class, 'momoPayment'])->name('momo.payment');
+
+    // Thanh Toán Bằng Momo
+    Route::post('/thanh-toan-momo', [PaymentController::class, 'momoPayment'])->name('momo.payment');
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
-    //quay lại trang chủ sau khi thanh toán thành công
-    Route::get('/thanh-toan-thanh-cong', [\App\Http\Controllers\PaymentController::class, 'momoReturn']);
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-    Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
-    Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
-
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
-    Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('my-orders');
+    Route::get('/thanh-toan-thanh-cong', [PaymentController::class, 'momoReturn'])->name('momo.return');
 });
 
 // ADMIN ROUTES (Đã chuẩn hóa)
-Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () {
+Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     
     // Quản lý Sản phẩm
-    Route::resource('products', App\Http\Controllers\Admin\ProductController::class);
+    Route::resource('products', App\Http\Controllers\Admin\ProductController::class)->except(['show']);
     
     // Quản lý Đơn hàng
     Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
@@ -102,6 +88,5 @@ Route::prefix('admin')->middleware(['auth'])->name('admin.')->group(function () 
     Route::post('/brands', [App\Http\Controllers\Admin\BrandController::class, 'store'])->name('brands.store');
     Route::get('/brands', [App\Http\Controllers\Admin\BrandController::class, 'index'])->name('brands.index');
     Route::delete('/brands/{id}', [App\Http\Controllers\Admin\BrandController::class, 'destroy'])->name('brands.destroy');
+    Route::put('/brands/{id}', [App\Http\Controllers\Admin\BrandController::class, 'update'])->name('brands.update');
 });
-
-

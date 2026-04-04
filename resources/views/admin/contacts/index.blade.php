@@ -39,7 +39,6 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div class="flex justify-end gap-2">
-                            <!-- Nút Xem chi tiết -->
                             <button type="button" 
                                 data-name="{{ $contact->name }}"
                                 data-email="{{ $contact->email }}"
@@ -70,10 +69,9 @@
     </div>
 </div>
 
-<!-- Giao diện Modal (Bị ẩn mặc định) -->
-<div id="contactModal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center transition-opacity">
-    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden transform transition-all">
-        <!-- Header Modal -->
+<div id="contactModal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm transition-opacity">
+    <div class="flex min-h-full items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden transform transition-all">
         <div class="flex justify-between items-center p-4 border-b border-slate-200 bg-slate-50">
             <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
                 <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
@@ -82,7 +80,6 @@
             <button type="button" onclick="closeContactModal()" class="text-slate-400 hover:text-red-500 font-bold text-2xl leading-none outline-none">&times;</button>
         </div>
         
-        <!-- Body Modal -->
         <div class="p-6">
             <div class="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-slate-100">
                 <div>
@@ -103,7 +100,6 @@
             </div>
         </div>
         
-        <!-- Footer Modal -->
         <div class="p-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-3">
             <button type="button" onclick="closeContactModal()" class="px-5 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg transition font-bold shadow-sm">
                 Đóng
@@ -114,32 +110,27 @@
             </a>
         </div>
     </div>
+    </div>
 </div>
 
-<!-- Script xử lý Modal -->
 <script>
     function showContactModal(button) {
-        // Lấy dữ liệu từ các thuộc tính data-* của nút được bấm
         const name = button.getAttribute('data-name');
         const email = button.getAttribute('data-email');
         const time = button.getAttribute('data-time');
         const message = button.getAttribute('data-message');
 
-        // Đổ dữ liệu vào Modal
         document.getElementById('modalName').innerText = name;
         document.getElementById('modalEmail').innerText = email;
         document.getElementById('modalTime').innerText = time;
         document.getElementById('modalMessage').innerText = message;
         
-        // Cập nhật link gửi email (truyền email khách hàng vào link của Gmail)
         document.getElementById('modalReplyBtn').href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(email);
 
-        // Hiển thị Modal
         document.getElementById('contactModal').classList.remove('hidden');
     }
 
     function closeContactModal() {
-        // Ẩn Modal
         document.getElementById('contactModal').classList.add('hidden');
     }
 </script>

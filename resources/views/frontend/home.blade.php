@@ -31,18 +31,17 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             @foreach($featuredCategories as $category)
-            <div class="relative group overflow-hidden rounded-2xl shadow-sm border border-slate-100 aspect-[4/3] bg-slate-100 flex items-center justify-center">
-                <!-- Tạm thời dùng hiệu ứng gradient thay cho ảnh danh mục vì trong DB chưa có cột ảnh danh mục -->
-                <div class="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 group-hover:scale-105 transition duration-500"></div>
-                <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-300"></div>
+            <a href="{{ route('shoes.index', ['category' => [$category->id]]) }}" class="relative group overflow-hidden rounded-2xl shadow-sm border border-slate-100 aspect-4/3 bg-slate-100 flex items-center justify-center">
+                <img src="{{ $category->featured_background_url }}" alt="{{ $category->name }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                <div class="absolute inset-0 bg-slate-950/65 group-hover:bg-slate-950/45 transition duration-300"></div>
                 <div class="relative z-10 text-center p-6">
                     <h3 class="text-2xl font-bold text-white mb-2">{{ $category->name }}</h3>
                     <p class="text-orange-400 font-medium mb-4">{{ $category->shoes_count }} Sản phẩm</p>
-                    <a href="{{ route('shoes.index', ['category' => $category->id]) }}" class="inline-block border-2 border-white text-white font-semibold px-6 py-2 rounded-full hover:bg-white hover:text-slate-900 transition">
+                    <span class="inline-block border-2 border-white text-white font-semibold px-6 py-2 rounded-full hover:bg-white hover:text-slate-900 transition">
                         Khám phá
-                    </a>
+                    </span>
                 </div>
-            </div>
+            </a>
             @endforeach
         </div>
     </div>

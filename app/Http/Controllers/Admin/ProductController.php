@@ -10,6 +10,7 @@ use App\Models\Brand;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Throwable;
 
 class ProductController extends Controller
 {
@@ -20,7 +21,7 @@ class ProductController extends Controller
         // Nếu có từ khóa tìm kiếm
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where('name', 'like', '%' . $search . '%');
+            $query->whereLike('name', '%' . $search . '%');
         }
 
         // Lấy dữ liệu, sắp xếp mới nhất và giữ lại tham số tìm kiếm khi chuyển trang (appends)
@@ -44,9 +45,11 @@ class ProductController extends Controller
             'brand_id' => 'required|exists:brands,id',
             'price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
+            'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240', // Validate mảng hình ảnh
         ]);
 
+        $uploadedImages = [];
         DB::beginTransaction();
         try {
             // 1. Tạo Giày mới
@@ -60,24 +63,8 @@ class ProductController extends Controller
 
             // 2. Xử lý Upload Hình ảnh
             if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $index => $file) {
-                    
-                    // Đẩy file lên Cloudinary, gom vào thư mục 'shoes_store'
-                    $cloudinaryImage = Cloudinary::upload($file->getRealPath(), [
-                        'folder' => 'shoes_store'
-                    ]);
-
-                    // Lấy URL và Public ID từ Cloudinary trả về
-                    $imageUrl = $cloudinaryImage->getSecurePath();
-                    $publicId = $cloudinaryImage->getPublicId();
-                    
-                    DB::table('shoe_images')->insert([
-                        'shoe_id' => $shoe->id,
-                        'image_url' => $imageUrl,
-                        'public_id' => $publicId, // Lưu public_id để sau này xóa ảnh trên Cloudinary nếu cần
-                        'is_primary' => $index === 0 ? true : false,
-                    ]);
-                }
+                $uploadedImages = $this->uploadImages($request->file('images'));
+                $this->insertShoeImages($shoe->id, $uploadedImages);
             }
 
             // 3. Xử lý các biến thể (Màu, Size, Số lượng)
@@ -96,8 +83,9 @@ class ProductController extends Controller
 
             DB::commit();
             return redirect()->route('admin.products.index')->with('success', 'Thêm sản phẩm thành công!');
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
+            $this->deleteCloudinaryImages($uploadedImages);
             return back()->with('error', 'Lỗi: ' . $e->getMessage())->withInput();
         }
     }
@@ -119,9 +107,12 @@ class ProductController extends Controller
             'brand_id' => 'required|exists:brands,id',
             'price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
+            'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
         ]);
 
+        $uploadedImages = [];
+        $oldImages = [];
         DB::beginTransaction();
         try {
             $shoe = Shoe::findOrFail($id);
@@ -137,23 +128,10 @@ class ProductController extends Controller
 
             // 2. Xử lý up thêm ảnh mới (nếu có)
             if ($request->hasFile('images')) {
-                // TÙY CHỌN: Xóa ảnh cũ trên Database (và cả trên Cloudinary nếu cần)
-                // Nếu bạn muốn giữ ảnh cũ thì bỏ qua bước này.
+                $uploadedImages = $this->uploadImages($request->file('images'));
+                $oldImages = DB::table('shoe_images')->where('shoe_id', $shoe->id)->get()->all();
                 DB::table('shoe_images')->where('shoe_id', $shoe->id)->delete();
-
-                foreach ($request->file('images') as $index => $file) {
-                    $cloudinaryImage = Cloudinary::upload($file->getRealPath(), [
-                        'folder' => 'shoes_store'
-                    ]);
-
-                    DB::table('shoe_images')->insert([
-                        'shoe_id' => $shoe->id,
-                        'image_url' => $cloudinaryImage->getSecurePath(),
-                        'public_id' => $cloudinaryImage->getPublicId(),
-                        // Cài đặt ảnh đầu tiên tải lên làm ảnh chính
-                        'is_primary' => $index === 0 ? true : false, 
-                    ]);
-                }
+                $this->insertShoeImages($shoe->id, $uploadedImages);
             }
 
             // 3. Xử lý các biến thể (Cập nhật cái cũ & Thêm cái mới)
@@ -182,9 +160,11 @@ class ProductController extends Controller
             }
 
             DB::commit();
+            $this->deleteCloudinaryImages($oldImages);
             return redirect()->route('admin.products.index')->with('success', 'Cập nhật sản phẩm thành công!');
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
+            $this->deleteCloudinaryImages($uploadedImages);
             return back()->with('error', 'Lỗi: ' . $e->getMessage())->withInput();
         }
     }
@@ -193,5 +173,64 @@ class ProductController extends Controller
     {
         Shoe::findOrFail($id)->delete(); // Các ảnh và biến thể sẽ tự xóa nếu DB set cascadeOnDelete
         return back()->with('success', 'Đã xóa sản phẩm!');
+    }
+
+    private function uploadImages(array $files): array
+    {
+        $uploadedImages = [];
+
+        foreach (array_values($files) as $index => $file) {
+            if (!$file->isValid()) {
+                throw new \RuntimeException('Ảnh tải lên không hợp lệ: ' . $file->getClientOriginalName());
+            }
+
+            $cloudinaryImage = Cloudinary::uploadApi()->upload($file->getRealPath(), [
+                'folder' => 'shoes_store',
+            ]);
+
+            $imageUrl = $cloudinaryImage['secure_url'] ?? $cloudinaryImage['url'] ?? null;
+            $publicId = $cloudinaryImage['public_id'] ?? null;
+
+            if (empty($imageUrl) || empty($publicId)) {
+                throw new \RuntimeException('Cloudinary không trả về đủ thông tin ảnh sau khi tải lên.');
+            }
+
+            $uploadedImages[] = [
+                'image_url' => $imageUrl,
+                'public_id' => $publicId,
+                'is_primary' => $index === 0,
+            ];
+        }
+
+        return $uploadedImages;
+    }
+
+    private function insertShoeImages(int $shoeId, array $uploadedImages): void
+    {
+        foreach ($uploadedImages as $image) {
+            DB::table('shoe_images')->insert([
+                'shoe_id' => $shoeId,
+                'image_url' => $image['image_url'],
+                'public_id' => $image['public_id'],
+                'is_primary' => $image['is_primary'],
+            ]);
+        }
+    }
+
+    private function deleteCloudinaryImages(iterable $images): void
+    {
+        foreach ($images as $image) {
+            $publicId = is_array($image) ? ($image['public_id'] ?? null) : ($image->public_id ?? null);
+
+            if (empty($publicId)) {
+                continue;
+            }
+
+            try {
+                Cloudinary::uploadApi()->destroy($publicId);
+            } catch (Throwable $cloudinaryException) {
+                report($cloudinaryException);
+            }
+        }
     }
 }

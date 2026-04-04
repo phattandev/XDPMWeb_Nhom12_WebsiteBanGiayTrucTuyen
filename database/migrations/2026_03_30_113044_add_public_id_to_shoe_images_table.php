@@ -12,8 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('shoe_images', function (Blueprint $table) {
-            // Thêm cột public_id nằm ngay sau cột image_url
-            $table->string('public_id')->nullable()->after('image_url'); 
+            $table->string('public_id')->nullable();
         });
     }
 

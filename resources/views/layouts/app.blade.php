@@ -12,7 +12,7 @@
     <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
-                <div class="flex-shrink-0 flex items-center gap-6">
+                <div class="shrink-0 flex items-center gap-6">
                     <a href="{{ route('home') }}" class="text-2xl font-black text-orange-600 tracking-tighter italic">SHOE<span class="text-slate-800">STORE</span></a>
                     <!-- <a href="{{ route('shoes.index') }}" class="hidden md:block text-slate-600 hover:text-orange-600 font-medium transition">Sản phẩm</a> -->
                      <div class="hidden md:flex items-center space-x-6 mt-1">
@@ -67,7 +67,7 @@
         </div>
     </nav>
 
-    <main class="flex-grow">
+    <main class="grow">
         @yield('content')
     </main>
 
